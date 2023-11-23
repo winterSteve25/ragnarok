@@ -5,6 +5,11 @@ export namespace Backend {
         let result: string[] = await invoke("get_files_in_path", {path: path});
         return result.map((e: any) => new File(e));
     }
+    
+    export async function openTextFile(path: string): Promise<string> {
+        let result: string = await invoke("open_text_file", {path: path})
+        return result;
+    }
 }
 
 export class File {

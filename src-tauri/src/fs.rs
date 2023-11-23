@@ -1,3 +1,6 @@
+use std::fs;
+use std::fs::OpenOptions;
+use std::io::Read;
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use crate::errors::FSError;
@@ -45,4 +48,9 @@ pub fn get_files_in_path(path: String) -> Result<Vec<File>, FSError> {
         .collect::<Vec<File>>();
 
     Ok(dir)
+}
+
+#[tauri::command]
+pub fn open_text_file(path: String) -> Result<String, FSError> {
+    Ok(fs::read_to_string(path)?)
 }

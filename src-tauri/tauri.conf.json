@@ -14,6 +14,12 @@
       "all": false,
       "path": {
         "all": true
+      },
+      "http": {
+        "all": true,
+        "scope": [
+          "openfile://**"
+        ]
       }
     },
     "bundle": {
