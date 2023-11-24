@@ -1,6 +1,4 @@
 use std::fs;
-use std::fs::OpenOptions;
-use std::io::Read;
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 use crate::errors::FSError;

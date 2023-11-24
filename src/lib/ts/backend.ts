@@ -7,8 +7,7 @@ export namespace Backend {
     }
     
     export async function openTextFile(path: string): Promise<string> {
-        let result: string = await invoke("open_text_file", {path: path})
-        return result;
+        return await invoke("open_text_file", {path: path});
     }
 }
 

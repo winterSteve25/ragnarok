@@ -1,35 +1,45 @@
 <script lang="ts">
-import { Backend } from "../../ts/backend";
-import type { File } from "../../ts/backend";
-import { path } from "@tauri-apps/api";
+    import {path} from "@tauri-apps/api";
+    import type {File} from "../../ts/backend";
+    import {Backend} from "../../ts/backend";
+    import FileItem from "./FileItem.svelte";
+    
+    export let currentPath: string;
+    
+    async function getPath(): Promise<string> {
+        if (currentPath) {
+            return currentPath;
+        }
 
-export let currentPath: string = "";
-
-async function getPath(): Promise<string> {
-    if (currentPath) {
+        currentPath = await path.homeDir();
         return currentPath;
     }
-    
-    currentPath = await path.homeDir();
-    return currentPath;
-}
 
-async function getFiles(): Promise<File[]> {
-    let path = await getPath();
-    return await Backend.getFilesInPath(path);
-}
-
+    async function getFiles(): Promise<File[]> {
+        let path = await getPath();
+        return await Backend.getFilesInPath(path);
+    }
 </script>
 
-<div class="FileTree">
+<div>
     {#await getFiles()}
         <p>Loading directory</p>
     {:then files}
-        <p>{JSON.stringify(files)}</p>
+        {#each files as file}
+            {#if file.filetype === "File"}
+                <FileItem file={file}/>
+            {/if}
+        {/each}
     {:catch e}
         <p>Failed to load directory, {e}</p>
     {/await}
 </div>
 
 <style lang="scss">
+    div {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
 </style>

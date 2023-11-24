@@ -1,18 +1,23 @@
 <script lang="ts">
-import FileTree from "./lib/components/tree/FileTree.svelte";
-import {onMount} from "svelte";
-import {Backend} from "./lib/ts/backend";
-
-onMount(async () => {
-    console.log(Backend.openTextFile("/home/cadenz/Documents/G12-HS/Biology/Unit 1/09-07 Water.md"));
-})
-
+    import {Pane, Splitpanes} from "svelte-splitpanes";
+    import FileTree from "./lib/components/tree/FileExplorer.svelte";
+    import Editor from "./lib/components/editor/Editor.svelte";
 </script>
 
-<main class="App">
-    <FileTree></FileTree>
+<main>
+    <Splitpanes theme="custom">
+        <Pane minSize={15} snapSize={5} size={20}>
+            <FileTree/>
+        </Pane>
+        <Pane minSize={20}>
+            <Editor/>
+        </Pane>
+    </Splitpanes>
 </main>
 
 <style lang="scss">
-    
+  main {
+    height: 100%;
+    width: 100%;
+  }
 </style>

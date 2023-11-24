@@ -15,10 +15,15 @@
       "path": {
         "all": true
       },
-      "http": {
-        "all": true,
+      "fs": {
+        "readDir": true,
+        "readFile": true,
+        "createDir": true,
+        "writeFile": true,
+        "exists": true,
         "scope": [
-          "openfile://**"
+          "$APPCONFIG",
+          "$APPCONFIG/**"
         ]
       }
     },
@@ -43,7 +48,14 @@
         "resizable": true,
         "title": "Ragnarok",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "visible": true
+      },
+      {
+        "width": 400,
+        "height": 200,
+        "url": "splashscreen.html",
+        "label": "splashscreen"
       }
     ]
   }
