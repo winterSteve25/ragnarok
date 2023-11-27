@@ -1,9 +1,16 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
+import {sveltePreprocess} from "svelte-preprocess/dist/autoProcess";
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [svelte()],
+  plugins: [svelte({
+    preprocess: sveltePreprocess({
+      scss: {
+        // prependData: "@import 'src/lib.scss'"
+      }
+    })
+  })],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

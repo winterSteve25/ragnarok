@@ -9,26 +9,20 @@
 </div>
 
 <style lang="scss">
-    .FileItem {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      
-      height: 32px;
-      width: 100%;
-      
-      border-top-right-radius: 8px;
-      border-bottom-right-radius: 8px;
-      
-      border-left: solid var(--editor-foreground-secondary) 2px;
-      padding: 8px 16px;
-      box-sizing: border-box;
-      
-      transition: ease-in-out 50ms;
-      
-      &:hover {
-        background-color: var(--code-background);
-        cursor: pointer;
-      }
-    }
+  @import "src/lib.scss";
+
+  .FileItem {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-left: solid var(--editor-foreground-secondary) 2px;
+
+    height: 32px;
+    max-width: 100%;
+    min-width: auto;
+
+    padding: 8px 16px;
+    box-sizing: border-box;
+
+    @include button;
+  }
 </style>

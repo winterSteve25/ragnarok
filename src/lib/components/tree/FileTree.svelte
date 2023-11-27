@@ -3,6 +3,7 @@
     import type {File} from "../../ts/backend";
     import {Backend} from "../../ts/backend";
     import FileItem from "./FileItem.svelte";
+    import DirItem from "./DirItem.svelte";
     
     export let currentPath: string;
     
@@ -28,6 +29,9 @@
         {#each files as file}
             {#if file.filetype === "File"}
                 <FileItem file={file}/>
+            {/if}
+            {#if file.filetype === "Directory"}
+                <DirItem dir={file}/>
             {/if}
         {/each}
     {:catch e}

@@ -1,0 +1,12 @@
+@mixin button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  
+  transition: ease-in-out 50ms;
+
+  &:hover {
+    background-color: var(--code-background);
+    cursor: pointer;
+  }
+}
