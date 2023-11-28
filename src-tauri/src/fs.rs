@@ -44,7 +44,7 @@ pub fn get_files_in_path(path: String) -> Result<Vec<File>, FSError> {
             }
         }).ok())
         .collect::<Vec<File>>();
-
+    
     Ok(dir)
 }
 

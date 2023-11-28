@@ -7,7 +7,7 @@ export default defineConfig(async () => ({
   plugins: [svelte({
     preprocess: sveltePreprocess({
       scss: {
-        // prependData: "@import 'src/lib.scss'"
+        prependData: "@import 'src/lib.scss';"
       }
     })
   })],

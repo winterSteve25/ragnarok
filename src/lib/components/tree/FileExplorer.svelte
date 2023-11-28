@@ -1,7 +1,7 @@
 <script lang="ts">
-import FileTree from "./FileTree.svelte";
+    import FileTree from "./FileTree.svelte";
 
-export let currentPath: string = "";
+    export let currentPath: string = "";
 </script>
 
 <div class="FileTree">
@@ -9,4 +9,7 @@ export let currentPath: string = "";
 </div>
 
 <style lang="scss">
+  .FileTree {
+    padding: 16px;
+  }
 </style>

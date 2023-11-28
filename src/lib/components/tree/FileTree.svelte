@@ -41,9 +41,9 @@
 
 <style lang="scss">
     div {
-      padding: 24px;
       display: flex;
       flex-direction: column;
       gap: 4px;
+      padding: 8px 16px;
     }
 </style>
