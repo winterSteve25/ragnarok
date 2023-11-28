@@ -4,8 +4,12 @@
     import {Backend} from "../../ts/backend";
     import FileItem from "./FileItem.svelte";
     import DirItem from "./DirItem.svelte";
+    import {get} from "svelte/store";
+    import {Settings} from "../../ts/settings";
     
     export let currentPath: string;
+    
+    $: showHidden = get(Settings.SETTINGS).showHiddenFiles;
     
     async function getPath(): Promise<string> {
         if (currentPath) {
@@ -27,11 +31,20 @@
         <p>Loading directory</p>
     {:then files}
         {#each files as file}
-            {#if file.filetype === "File"}
-                <FileItem file={file}/>
-            {/if}
-            {#if file.filetype === "Directory"}
-                <DirItem dir={file}/>
+            {#if file.hidden && showHidden}
+                {#if file.filetype === "File"}
+                    <FileItem file={file}/>
+                {/if}
+                {#if file.filetype === "Directory"}
+                    <DirItem dir={file}/>
+                {/if}
+            {:else if !file.hidden}
+                {#if file.filetype === "File"}
+                    <FileItem file={file}/>
+                {/if}
+                {#if file.filetype === "Directory"}
+                    <DirItem dir={file}/>
+                {/if}
             {/if}
         {/each}
     {:catch e}
@@ -44,6 +57,5 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
-      padding: 8px 16px;
     }
 </style>

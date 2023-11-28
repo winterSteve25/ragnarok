@@ -8,11 +8,13 @@ export namespace Settings {
     export const LOADED_THEME: Writable<Theming.Theme> = writable();
     
     const DEFAULT_SETTINGS: Settings = {
-        theme: "Gruvbox"
+        theme: "Gruvbox",
+        showHiddenFiles: false,
     }
     
     export interface Settings {
         theme: string,
+        showHiddenFiles: boolean,
     }
     
     export async function load() {

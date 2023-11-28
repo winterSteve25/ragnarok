@@ -10,6 +10,7 @@
 
 <style lang="scss">
   .FileTree {
-    padding: 16px;
+    padding: 24px;
+    height: auto;
   }
 </style>

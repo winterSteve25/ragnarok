@@ -42,6 +42,7 @@ html, body {
 .splitpanes.custom {
   .splitpanes__pane {
     background-color: var(--editor-background);
+    overflow-y: auto;
   }
 
   .splitpanes__splitter {
