@@ -20,3 +20,9 @@
     cursor: pointer;
   }
 }
+
+@mixin selectable {
+  -moz-user-select: all;
+  -webkit-user-select: all;
+  user-select: all;
+}

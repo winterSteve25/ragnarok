@@ -28,17 +28,6 @@ fn main() {
             fs::open_text_file,
             close_splashscreen
         ])
-        .register_uri_scheme_protocol("openimage", |app, req| {
-            let failed = ResponseBuilder::new()
-                .header("Origin", "*")
-                .header("Access-Control-Allow-Origin", "*")
-                .status(200)
-                .body(vec![]);
-            
-            println!("{:?}", req.uri());
-            
-            return failed;
-        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
