@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^1.5.1",
+    "pixi.js": "^7.3.2",
     "svelte-splitpanes": "^0.8.0"
   },
   "devDependencies": {
