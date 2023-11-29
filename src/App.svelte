@@ -6,7 +6,7 @@
 
 <main>
     <Splitpanes theme="custom">
-        <Pane minSize={15} snapSize={5} size={20}>
+        <Pane minSize={15} snapSize={2} size={20}>
             <FileTree/>
         </Pane>
         <Pane minSize={20}>

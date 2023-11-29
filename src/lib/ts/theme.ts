@@ -67,7 +67,6 @@ export namespace Theming {
         });
 
         loadedThemes["Gruvbox"] = gruvboxTheme;
-        console.log(loadedThemes);
     }
 
     export function getIconFromLoadedTheme(file: File): string {

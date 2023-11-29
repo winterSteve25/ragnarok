@@ -23,7 +23,7 @@ pub enum FileType {
 
 #[tauri::command]
 pub fn get_files_in_path(path: String) -> Result<Vec<File>, FSError> {
-    let path = PathBuf::from(path);
+    let path = PathBuf::from(shellexpand::tilde(&path).to_string());
     let mut dir = path
         .read_dir()?
         .filter_map(|entry| entry.map(|entry| {

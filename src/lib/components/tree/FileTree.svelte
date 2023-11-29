@@ -1,5 +1,4 @@
 <script lang="ts">
-    import {path} from "@tauri-apps/api";
     import type {File} from "../../ts/backend";
     import {Backend} from "../../ts/backend";
     import FileItem from "./FileItem.svelte";
@@ -10,19 +9,9 @@
     export let currentPath: string;
     
     $: showHidden = get(Settings.SETTINGS).showHiddenFiles;
-    
-    async function getPath(): Promise<string> {
-        if (currentPath) {
-            return currentPath;
-        }
-
-        currentPath = await path.homeDir();
-        return currentPath;
-    }
 
     async function getFiles(): Promise<File[]> {
-        let path = await getPath();
-        return await Backend.getFilesInPath(path);
+        return await Backend.getFilesInPath(currentPath);
     }
 </script>
 
