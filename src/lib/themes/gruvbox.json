@@ -22,6 +22,7 @@
     "[\\d\\w.]*\\.html$": "/html.svg",
     "[\\d\\w.]*\\.svelte$": "/svelte.svg",
     "[\\d\\w.]*\\.json$": "/json.svg",
+    "[\\d\\w.]*\\.rs$": "/rust.svg",
     "FILE": "/file.svg",
     "DIR": "/directory.svg"
   }
