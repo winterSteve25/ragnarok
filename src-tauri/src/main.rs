@@ -1,11 +1,11 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use tauri::http::ResponseBuilder;
 use tauri::{Manager, Window};
 
 mod fs;
 mod errors;
+mod lsp;
 
 #[tauri::command]
 async fn close_splashscreen(window: Window) -> Result<(), tauri::Error>{
@@ -26,6 +26,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             fs::get_files_in_path,
             fs::open_text_file,
+            lsp::start_client,
             close_splashscreen
         ])
         .run(tauri::generate_context!())

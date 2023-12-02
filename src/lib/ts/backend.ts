@@ -9,6 +9,10 @@ export namespace Backend {
     export async function openTextFile(file: File): Promise<string> {
         return await invoke("open_text_file", {path: file.filepath});
     }
+    
+    export async function startLSPClient() {
+        
+    }
 }
 
 export interface File {
