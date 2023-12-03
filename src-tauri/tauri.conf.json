@@ -49,13 +49,17 @@
         "title": "Ragnarok",
         "width": 800,
         "height": 600,
-        "visible": true
+        "visible": false
       },
       {
         "width": 400,
         "height": 200,
         "url": "splashscreen.html",
-        "label": "splashscreen"
+        "label": "splashscreen",
+        "center": true,
+        "resizable": false,
+        "hiddenTitle": true,
+        "decorations": false
       }
     ]
   }
