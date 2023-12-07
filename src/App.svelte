@@ -5,11 +5,13 @@
 
     import {Settings} from "./lib/ts/settings";
     import {Theming} from "./lib/ts/theme";
+    import {Plugins} from "./lib/ts/plugins";
     import {invoke} from "@tauri-apps/api";
 
     async function load() {
         await Theming.loadThemes();
         await Settings.load();
+        await Plugins.load();
         await invoke("close_splashscreen");
     }
 </script>
