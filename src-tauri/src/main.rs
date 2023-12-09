@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use tauri::{Manager, Window};
+use tauri::http::ResponseBuilder;
 
 mod fs;
 mod errors;
