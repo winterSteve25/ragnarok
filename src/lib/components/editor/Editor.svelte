@@ -1,14 +1,15 @@
 <script lang="ts">
-    import {Stores} from "../../ts/stores";
     import {onDestroy} from "svelte";
-    import {Backend, type File} from "../../ts/backend";
+    import {Backend} from "../../ts/backend";
+    import type {File} from "ragnarok-api";
+    import {openedFile} from "../../ts/stores";
 
     let mediaView: boolean = false;
-    let openedFile: File | undefined = undefined;
+    let file: File | undefined = undefined;
 
-    const unsub = Stores.openedFile.subscribe((newFile) => {
-        openedFile = newFile;
-        mediaView = isMediaFile(openedFile?.filename);
+    const unsub = openedFile.subscribe((newFile) => {
+        file = newFile;
+        mediaView = isMediaFile(file?.filename);
     });
 
     function isMediaFile(fileName: string | undefined): boolean {
@@ -42,11 +43,11 @@
 </script>
 
 <div class="Editor">
-    {#if openedFile}
+    {#if file}
         {#if mediaView}
             <span>Not yet implemented</span>
         {:else}
-            {#await openTextFile(openedFile)}
+            {#await openTextFile(file)}
                 <span>Loading Text</span>
             {:then content}
                 <div>

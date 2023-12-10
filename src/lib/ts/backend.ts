@@ -1,4 +1,5 @@
 import {invoke} from "@tauri-apps/api";
+import type {File} from "ragnarok-api";
 
 export namespace Backend {
     export async function getFilesInPath(path: string): Promise<File[]> {
@@ -11,13 +12,5 @@ export namespace Backend {
     }
     
     export async function startLSPClient() {
-        
     }
-}
-
-export interface File {
-    hidden: boolean;
-    filename: string;
-    filepath: string;
-    filetype: "File" | "Directory" | "Symlink" | "Unknown";
 }

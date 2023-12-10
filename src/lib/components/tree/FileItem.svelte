@@ -1,13 +1,12 @@
 <script lang="ts">
-    import type {File} from "../../ts/backend";
-    import {Stores} from "../../ts/stores";
-    import {Theming} from "../../ts/theme";
+    import type {File} from "ragnarok-api";
+    import {openedFile} from "../../ts/stores";
 
     export let file: File;
 </script>
 
-<button class="FileItem" on:click={() => Stores.openedFile.set(file)}>
-    <img alt="file-icon" src={Theming.getIconFromLoadedTheme(file)}/>
+<button class="FileItem" on:click={() => openedFile.set(file)}>
+<!--    <img alt="file-icon" src={Theming.getIconFromLoadedTheme(file)}/>-->
     <span>{file.filename}</span>
 </button>
 

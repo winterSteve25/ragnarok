@@ -1,17 +1,47 @@
 <script lang="ts">
-    import type {File} from "../../ts/backend";
+    import type {File} from "ragnarok-api";
     import {Backend} from "../../ts/backend";
     import FileItem from "./FileItem.svelte";
     import DirItem from "./DirItem.svelte";
-    import {get} from "svelte/store";
-    import {Settings} from "../../ts/settings";
     
     export let currentPath: string;
     
-    $: showHidden = get(Settings.SETTINGS).showHiddenFiles;
+    $: showHidden = false;
 
     async function getFiles(): Promise<File[]> {
-        return await Backend.getFilesInPath(currentPath);
+        // return await Backend.getFilesInPath(currentPath);
+        return [
+            {
+                filename: "Test",
+                filetype: "Directory",
+                hidden: false, 
+                filepath: ""
+            },
+            {
+                filename: "Test",
+                filetype: "Directory",
+                hidden: false,
+                filepath: ""
+            },
+            {
+                filename: "Test",
+                filetype: "Directory",
+                hidden: false,
+                filepath: ""
+            },
+            {
+                filename: "Test",
+                filetype: "Directory",
+                hidden: false,
+                filepath: ""
+            },
+            {
+                filename: "Test",
+                filetype: "Directory",
+                hidden: false,
+                filepath: ""
+            },
+        ]
     }
 </script>
 

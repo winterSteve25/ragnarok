@@ -23,7 +23,17 @@
         "exists": true,
         "scope": [
           "$APPCONFIG",
-          "$APPCONFIG/**"
+          "$APPCONFIG/**",
+          "$APPCACHE",
+          "$APPCACHE/**",
+          "$APPLOCALDATA",
+          "$APPLOCALDATA/**"
+        ]
+      },
+      "http": {
+        "all": true,
+        "scope": [
+          "https://api.github.com/repos/**"
         ]
       }
     },

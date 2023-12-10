@@ -1,6 +1,5 @@
 import {type Writable, writable} from "svelte/store";
-import type {File} from "./backend";
+import type {File} from "ragnarok-api";
 
-export namespace Stores {
-    export const openedFile: Writable<File | undefined> = writable(undefined);
-}
+export const openedFile: Writable<File | undefined> = writable(undefined);
+export const settingsModal = writable(null);

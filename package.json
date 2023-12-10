@@ -1,7 +1,7 @@
 {
   "name": "ragnarok",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^1.5.1",
+    "ragnarok-api": "latest",
+    "svelte-simple-modal": "^1.6.1",
     "svelte-splitpanes": "^0.8.0",
     "typescript": "^5.3.2"
   },

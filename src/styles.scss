@@ -43,6 +43,14 @@ html, body {
   height: 100%;
 }
 
+span {
+  cursor: default;
+}
+
+pre {
+  cursor: default;
+}
+
 .splitpanes.custom {
   .splitpanes__pane {
     background-color: var(--editor-background);
