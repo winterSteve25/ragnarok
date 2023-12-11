@@ -1,7 +1,6 @@
 <script lang="ts">
     import type {File} from "ragnarok-api";
     import FileTree from "./FileTree.svelte";
-    import {slide} from "svelte/transition";
 
     let expanded = false;
 
@@ -13,11 +12,9 @@
         <!--        <img alt="file-icon" src={Theming.getIconFromLoadedTheme(dir)}/>-->
         <span>{dir.filename}</span>
     </button>
-    {#if expanded}
-        <div id="tree" transition:slide={{ duration: 5000 }}>
-            <FileTree currentPath={dir.filepath}/>
-        </div>
-    {/if}
+    <div id="tree">
+        <FileTree currentPath={dir.filepath} shown={expanded}/>
+    </div>
 </div>
 
 <style lang="scss">
