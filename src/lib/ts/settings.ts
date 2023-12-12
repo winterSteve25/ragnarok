@@ -1,7 +1,7 @@
 import type {Key} from "ragnarok-api";
-import type {PluginState} from "./plugins";
+import {Plugins, type PluginState} from "./plugins";
 import {appConfigDir} from "@tauri-apps/api/path";
-import {readTextFile} from "@tauri-apps/api/fs";
+import {exists, readTextFile, writeTextFile} from "@tauri-apps/api/fs";
 
 export interface Setting {
     plugins: Array<PluginState>;
@@ -18,6 +18,16 @@ export namespace Settings {
             settingsPath = (await appConfigDir()) + "settings.json";
         }
         
+        if (!(await exists(settingsPath))) {
+            await writeTextFile(settingsPath, JSON.stringify({} as Setting));
+            return;
+        }
+        
         const settings: Setting = JSON.parse(await readTextFile(settingsPath));
+        
+        for (const plugin of settings.plugins) {
+            if (!plugin.enabled) continue;
+            await Plugins.downloadOrLoadPlugin(plugin.path);
+        }
     }
 }

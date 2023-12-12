@@ -11,6 +11,7 @@ export interface PluginState {
 export namespace Plugins {
     let pluginsDir: string | undefined = undefined;
     let pluginsLockDir: string | undefined = undefined;
+    let loadedPlugins: Array<RagnarokPlugin> = [];
     
     export async function downloadOrLoadPlugin(plugin: PluginPath): Promise<Error | undefined> {
         return undefined;
@@ -31,7 +32,7 @@ export namespace Plugins {
     
     async function getCompiledPluginDirectory(name: string) {
         if (!pluginsDir) {
-            pluginsDir = await appLocalDataDir();
+            pluginsDir = await appLocalDataDir() + "plugins";
             pluginsLockDir = pluginsDir + "plugins.lock.json";
             
             if (!(await exists(pluginsDir))) {
@@ -46,7 +47,7 @@ export namespace Plugins {
         return `${pluginsDir}plugins/${name}/main.js`;
     }
     
-    export async function downloadPlugin(plugin: PluginPath): Promise<Error | undefined> {
+    async function downloadPlugin(plugin: PluginPath): Promise<Error | undefined> {
         if (plugin.git) {
             const [user, repo] = plugin.git.split("/");
             let response;

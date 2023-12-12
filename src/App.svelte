@@ -7,6 +7,7 @@
     import Modal from 'svelte-simple-modal';
     import {settingsModal} from "./lib/ts/stores";
     import type {FadeParams} from "svelte/transition";
+    import {Settings} from "./lib/ts/settings";
 
     const transitionProps: FadeParams = {
         duration: 200,
@@ -30,6 +31,7 @@
     }
 
     async function load() {
+        await Settings.loadSettings();
         await invoke("close_splashscreen");
     }
 </script>
