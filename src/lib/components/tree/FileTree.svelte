@@ -1,6 +1,6 @@
 <script lang="ts">
     import type {File} from "ragnarok-api";
-    import {Backend} from "../../ts/backend";
+    import {FileHelper} from "../../ts/fileHelper";
     import FileItem from "./FileItem.svelte";
     import DirItem from "./DirItem.svelte";
     import {slide} from "svelte/transition";
@@ -13,7 +13,7 @@
     $: showHidden = get(Settings.ACTIVE_SETTINGS).showHiddenFiles;
 
     async function getFiles(): Promise<File[]> {
-        return await Backend.getFilesInPath(currentPath);
+        return await FileHelper.getFilesInPath(currentPath);
     }
 </script>
 

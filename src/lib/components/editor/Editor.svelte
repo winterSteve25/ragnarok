@@ -1,6 +1,6 @@
 <script lang="ts">
     import {onDestroy} from "svelte";
-    import {Backend} from "../../ts/backend";
+    import {FileHelper} from "../../ts/fileHelper";
     import type {File} from "ragnarok-api";
     import {openedFile} from "../../ts/stores";
 
@@ -36,7 +36,7 @@
     }
 
     async function openTextFile(file: File) {
-        let result = await Backend.openTextFile(file);
+        let result = await FileHelper.openTextFile(file);
         fileContent = result;
         return result;
     }
