@@ -26,6 +26,8 @@ export namespace Plugins {
             } else {
                 await loadCompiledPlugin(plugin.path, plugin.path + "/dist/main.js");
             }
+            
+            return;
         } else if (plugin.git) {
             loadingPlugin.set(plugin.git);
 
@@ -35,6 +37,7 @@ export namespace Plugins {
             const name = `${user}.${repo}`;
 
             await loadCompiledPlugin(name, await getCompiledPluginDirectory(name));
+            return;
         }
 
         throw new Error("Invalid plugin path, no git or path specified");
