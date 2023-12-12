@@ -3,7 +3,6 @@
     import FileExplorer from "./lib/components/tree/FileExplorer.svelte";
     import Editor from "./lib/components/editor/Editor.svelte";
 
-    import {invoke} from "@tauri-apps/api";
     import Modal from 'svelte-simple-modal';
     import {settingsModal} from "./lib/ts/stores";
     import type {FadeParams} from "svelte/transition";
@@ -32,7 +31,6 @@
 
     async function load() {
         await Settings.loadSettings();
-        await invoke("close_splashscreen");
     }
 </script>
 

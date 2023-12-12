@@ -60,17 +60,6 @@
         "width": 800,
         "height": 600,
         "visible": true
-      },
-      {
-        "width": 400,
-        "height": 200,
-        "url": "splashscreen.html",
-        "label": "splashscreen",
-        "center": true,
-        "resizable": false,
-        "hiddenTitle": true,
-        "decorations": false,
-        "visible": false
       }
     ]
   }

@@ -10,21 +10,33 @@ export interface Setting {
 }
 
 export namespace Settings {
-    
+
     let settingsPath: string | undefined = undefined;
-    
+    const DEFAULT_SETTINGS: Setting = {
+        plugins: [
+            {
+                enabled: true,
+                path: {
+                    path: ""
+                }
+            }
+        ],
+        keyOverrides: {},
+        showHiddenFiles: false,
+    };
+
     export async function loadSettings() {
         if (!settingsPath) {
             settingsPath = (await appConfigDir()) + "settings.json";
         }
-        
+
         if (!(await exists(settingsPath))) {
-            await writeTextFile(settingsPath, JSON.stringify({} as Setting));
+            await writeTextFile(settingsPath, JSON.stringify(DEFAULT_SETTINGS));
             return;
         }
-        
+
         const settings: Setting = JSON.parse(await readTextFile(settingsPath));
-        
+
         for (const plugin of settings.plugins) {
             if (!plugin.enabled) continue;
             await Plugins.downloadOrLoadPlugin(plugin.path);

@@ -7,27 +7,12 @@ mod fs;
 mod errors;
 mod lsp;
 
-#[tauri::command]
-async fn close_splashscreen(window: Window) -> Result<(), tauri::Error>{
-    match window.get_window("splashscreen") {
-        Some(window) => window.close()?,
-        None => {}
-    };
-    
-    window.get_window("main")
-        .expect("no window labeled 'main' found")
-        .show()?;
-    
-    Ok(())
-}
-
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             fs::get_files_in_path,
             fs::open_text_file,
             lsp::start_client,
-            close_splashscreen
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

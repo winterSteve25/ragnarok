@@ -13,12 +13,30 @@ export namespace Plugins {
     let pluginsLockDir: string | undefined = undefined;
     let loadedPlugins: Array<RagnarokPlugin> = [];
     
-    export async function downloadOrLoadPlugin(plugin: PluginPath): Promise<Error | undefined> {
-        return undefined;
+    export async function loadPlugin(plugin: PluginPath): Promise<Error | undefined> {
+        if (plugin.path) {
+            if (plugin.path.endsWith("main.js")) {
+                return await loadCompiledPlugin(plugin.path);
+            } else if (plugin.path.endsWith("/")) {
+                return await loadCompiledPlugin(plugin.path + "dist/main.js");
+            } else {
+                return await loadCompiledPlugin(plugin.path + "/dist/main.js");
+            }
+        } else if (plugin.git) {
+            const err = await downloadPlugin(plugin.git, plugin.branch);
+            if (err) {
+                return err;
+            }
+
+            const [user, repo] = plugin.git.split("/");
+            return await loadCompiledPlugin(await getCompiledPluginDirectory(`${user}.${repo}`));
+        }
+        
+        return new Error("Invalid plugin path, no git or path specified");
     }
     
-    async function loadCompiledPlugin(name: string): Promise<Error | undefined> {
-        const pluginSource = await readTextFile(/*@vite-ignore*/await getCompiledPluginDirectory(name));
+    async function loadCompiledPlugin(path: string): Promise<Error | undefined> {
+        const pluginSource = await readTextFile(/*@vite-ignore*/path);
         const plugin = eval(pluginSource);
         const instance = new plugin.default();
         
@@ -27,6 +45,8 @@ export namespace Plugins {
         }
         
         await instance.onLoad();
+        loadedPlugins.push(instance);
+        
         return undefined;
     }
     
@@ -47,26 +67,22 @@ export namespace Plugins {
         return `${pluginsDir}plugins/${name}/main.js`;
     }
     
-    async function downloadPlugin(plugin: PluginPath): Promise<Error | undefined> {
-        if (plugin.git) {
-            const [user, repo] = plugin.git.split("/");
-            let response;
-            
-            if (plugin.branch) {
-                response = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/dist/main.js?ref=${plugin.branch}`);
-            } else {
-                response = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/dist/main.js`);
-            }
-            
-            if (!response.ok) {
-                return new Error(`Failed to fetch bundled version of the ${user}/${repo} at dist/main.js`);
-            }
-            
-            // @ts-ignore
-            const pluginData = response.data!["content"] as string;
-            await writeTextFile(await getCompiledPluginDirectory(`${user}.${repo}`), pluginData);
-        } else if (plugin.path) {
-            // TODO
+    async function downloadPlugin(gitPath: string, branch?: string): Promise<Error | undefined> {
+        const [user, repo] = gitPath.split("/");
+        let response;
+
+        if (branch) {
+            response = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/dist/main.js?ref=${branch}`);
+        } else {
+            response = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/dist/main.js`);
         }
+
+        if (!response.ok) {
+            return new Error(`Failed to fetch bundled version of the ${user}/${repo} at dist/main.js`);
+        }
+
+        // @ts-ignore
+        const pluginData = response.data!["content"] as string;
+        await writeTextFile(await getCompiledPluginDirectory(`${user}.${repo}`), pluginData);
     }
 }
