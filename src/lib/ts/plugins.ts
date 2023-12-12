@@ -3,11 +3,20 @@ import {createDir, exists, readTextFile, writeTextFile} from "@tauri-apps/api/fs
 import type {RagnarokPlugin, PluginPath} from "ragnarok-api";
 import {fetch} from "@tauri-apps/api/http";
 
+export interface PluginState {
+    path: PluginPath;
+    enabled: boolean;
+}
+
 export namespace Plugins {
     let pluginsDir: string | undefined = undefined;
     let pluginsLockDir: string | undefined = undefined;
     
-    export async function loadCompiledPlugin(name: string): Promise<Error | undefined> {
+    export async function downloadOrLoadPlugin(plugin: PluginPath): Promise<Error | undefined> {
+        return undefined;
+    }
+    
+    async function loadCompiledPlugin(name: string): Promise<Error | undefined> {
         const pluginSource = await readTextFile(/*@vite-ignore*/await getCompiledPluginDirectory(name));
         const plugin = eval(pluginSource);
         const instance = new plugin.default();
