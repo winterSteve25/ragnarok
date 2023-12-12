@@ -4,11 +4,13 @@
     import FileItem from "./FileItem.svelte";
     import DirItem from "./DirItem.svelte";
     import {slide} from "svelte/transition";
+    import {get} from "svelte/store";
+    import {Settings} from "../../ts/settings";
 
     export let currentPath: string;
     export let shown: boolean = true;
 
-    $: showHidden = false;
+    $: showHidden = get(Settings.ACTIVE_SETTINGS).showHiddenFiles;
 
     async function getFiles(): Promise<File[]> {
         return await Backend.getFilesInPath(currentPath);

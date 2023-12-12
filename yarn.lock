@@ -716,9 +716,9 @@ queue-microtask@^1.2.2:
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
 ragnarok-api@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/ragnarok-api/-/ragnarok-api-0.1.2.tgz#b07d8547fa6fe65c41f452eeedadad1524b0981c"
-  integrity sha512-9hj+1A5QrTaxiopXYKGfXDtqmX0LNB6gDkONjimIJ0ui8ICdrRSuZCA7xvtkoS46sNqFcDIhj0mFdUpany9h/Q==
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/ragnarok-api/-/ragnarok-api-0.1.4.tgz#df7633a9949763fa5a064fbba6e69cbfbad5370f"
+  integrity sha512-mRQn3Sv5FpdNWdUz1VksfMwf7ORn0/6L9NH52kro/mKc740KzQrldi0a7vP1iafjFic3np5MY0Syoo2qlKV9MQ==
 
 readdirp@~3.6.0:
   version "3.6.0"

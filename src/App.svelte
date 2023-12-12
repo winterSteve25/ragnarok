@@ -30,13 +30,18 @@
     }
 
     async function load() {
-        await Settings.loadSettings();
+        const err = await Settings.loadSettings();
+        if (err) {
+            throw err;
+        }
     }
 </script>
 
 <main>
     {#await load()}
-        Loading
+        <div class="center">
+            Loading
+        </div>
     {:then _}
         <Splitpanes theme="custom">
             <Pane minSize={15} snapSize={2} size={20}>
@@ -54,6 +59,10 @@
             styleWindowWrap={wrapperStyle}
             closeButton={false}
         />
+    {:catch err}
+        <div class="center">
+            {err}
+        </div>
     {/await}
 </main>
 
@@ -61,5 +70,13 @@
   main {
     height: 100%;
     width: 100%;
+  }
+  
+  .center {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 </style>

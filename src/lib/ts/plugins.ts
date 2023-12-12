@@ -1,6 +1,6 @@
 import {appLocalDataDir} from "@tauri-apps/api/path";
 import {createDir, exists, readTextFile, writeTextFile} from "@tauri-apps/api/fs";
-import type {RagnarokPlugin, PluginPath} from "ragnarok-api";
+import type {RagnarokPlugin, PluginPath, Keymap} from "ragnarok-api";
 import {fetch} from "@tauri-apps/api/http";
 
 export interface PluginState {
@@ -11,7 +11,8 @@ export interface PluginState {
 export namespace Plugins {
     let pluginsDir: string | undefined = undefined;
     let pluginsLockDir: string | undefined = undefined;
-    let loadedPlugins: Array<RagnarokPlugin> = [];
+    
+    const LOADED_PLUGINS: Map<string, RagnarokPlugin> = new Map<string, RagnarokPlugin>();
     
     export async function loadPlugin(plugin: PluginPath): Promise<Error | undefined> {
         if (plugin.path) {
@@ -35,6 +36,18 @@ export namespace Plugins {
         return new Error("Invalid plugin path, no git or path specified");
     }
     
+    export async function registerKeymap(keymap: Keymap): Promise<Error | undefined> {
+        for (const [_path, plugin] of LOADED_PLUGINS.entries()) {
+            try {
+                await plugin.registerKeybinds(keymap);
+            } catch (err) {
+                if (err instanceof Error) {
+                    return err;
+                }
+            }
+        }
+    }
+    
     async function loadCompiledPlugin(path: string): Promise<Error | undefined> {
         const pluginSource = await readTextFile(/*@vite-ignore*/path);
         const plugin = eval(pluginSource);
@@ -44,9 +57,17 @@ export namespace Plugins {
             return new Error("Export must be an instance of a RagnarokPlugin");
         }
         
-        await instance.onLoad();
-        loadedPlugins.push(instance);
+        try {
+            await instance.onLoad();
+        } catch (err) {
+            if (err instanceof Error) {
+                return new Error(`Error file loading ${path}: ${err.message}`);
+            }
+
+            return new Error(`Error file loading ${path}: ${err}`);
+        }
         
+        LOADED_PLUGINS.set(path, instance);
         return undefined;
     }
     
