@@ -4,7 +4,7 @@
     import Editor from "./lib/components/editor/Editor.svelte";
 
     import Modal from 'svelte-simple-modal';
-    import {settingsModal} from "./lib/ts/stores";
+    import {loadingPlugin, settingsModal} from "./lib/ts/stores";
     import type {FadeParams} from "svelte/transition";
     import {Settings} from "./lib/ts/settings";
 
@@ -30,17 +30,14 @@
     }
 
     async function load() {
-        const err = await Settings.loadSettings();
-        if (err) {
-            throw err;
-        }
+        await Settings.loadSettings();
     }
 </script>
 
 <main>
     {#await load()}
         <div class="center">
-            Loading
+            Loading {$loadingPlugin}
         </div>
     {:then _}
         <Splitpanes theme="custom">
@@ -61,7 +58,11 @@
         />
     {:catch err}
         <div class="center">
-            {err}
+            {err.message}<br/><br/>
+            {err.stack}<br/>
+            {#if err.cause}
+                {err.cause.stack}
+            {/if}
         </div>
     {/await}
 </main>
@@ -78,5 +79,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    text-align: start;
   }
 </style>

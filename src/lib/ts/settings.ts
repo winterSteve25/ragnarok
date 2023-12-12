@@ -31,7 +31,7 @@ export namespace Settings {
         return keymap;
     }
 
-    export async function loadSettings(): Promise<Error | undefined> {
+    export async function loadSettings() {
         if (!settingsPath) {
             settingsPath = (await appConfigDir()) + "settings.json";
         }
@@ -46,18 +46,11 @@ export namespace Settings {
         for (const plugin of settings.plugins) {
             if (!plugin.enabled) continue;
             
-            const err = await Plugins.loadPlugin(plugin.path);
-            if (err) {
-                return err;
-            }
+            await Plugins.loadPlugin(plugin.path);
         }
         
         const keymap = createDefaultKeymap();
-        const err = await Plugins.registerKeymap(keymap);
-        
-        if (err) {
-            return err;
-        }
+        await Plugins.registerKeymap(keymap);
         
         for (const [id, overrides] of Object.entries(settings.keyOverrides)) {
             if (overrides.length === 0) continue;
