@@ -1,11 +1,11 @@
-import {type Key, Keymap, Keybind} from "ragnarok-api";
-import {Plugins, type PluginState} from "./plugins";
+import {type Key, Keymap, Keybind, type PluginPath} from "ragnarok-api";
+import {Plugins} from "./plugins";
 import {appConfigDir} from "@tauri-apps/api/path";
 import {exists, readTextFile, writeTextFile} from "@tauri-apps/api/fs";
 import {type Writable, writable} from "svelte/store";
 
 export interface Setting {
-    plugins: Array<PluginState>;
+    plugins: Array<PluginPath>;
     keyOverrides: Record<string, Array<Key>>;
     showHiddenFiles: boolean;
 }
@@ -26,7 +26,7 @@ export namespace Settings {
         const keymap = new Keymap();
         
         keymap.register("motion.word", Keybind.by("Word Motion", "w")
-            .callBack((captures) => console.log("Forward")));
+            .callBack((_) => console.log("Forward")));
         
         return keymap;
     }
@@ -45,8 +45,7 @@ export namespace Settings {
 
         for (const plugin of settings.plugins) {
             if (!plugin.enabled) continue;
-            
-            await Plugins.loadPlugin(plugin.path);
+            await Plugins.loadPlugin(plugin);
         }
         
         const keymap = createDefaultKeymap();
@@ -56,11 +55,11 @@ export namespace Settings {
             if (overrides.length === 0) continue;
             if (!id) continue;
             
-            const keybind = keymap.map.get(id);
+            const keybind = keymap.getById(id);
             
             if (keybind) {
-                keybind.trigger = overrides[0];
-                keybind.sequence = overrides.slice(1);
+                keybind.setTrigger(overrides[0]);
+                keybind.setSequence(overrides.slice(1));
             }
         }
         

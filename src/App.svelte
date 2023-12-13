@@ -31,13 +31,22 @@
 
     async function load() {
         await Settings.loadSettings();
+        await new Promise(resolve => setTimeout(resolve, 1000));
     }
 </script>
 
 <main>
     {#await load()}
         <div class="center">
-            Loading {$loadingPlugin}
+            {#if $loadingPlugin}
+                <h1>
+                    Loading {$loadingPlugin}
+                </h1>
+            {:else}
+                <h1>
+                    Loading
+                </h1>
+            {/if}
         </div>
     {:then _}
         <Splitpanes theme="custom">

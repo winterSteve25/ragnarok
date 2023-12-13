@@ -1,63 +1,104 @@
 <script lang="ts">
     import {onDestroy} from "svelte";
     import {FileHelper} from "../../ts/fileHelper";
-    import type {File} from "ragnarok-api";
+    import {type File, type Key, type KeyDetailed, KeybindQuery, type Keybind} from "ragnarok-api";
     import {openedFile} from "../../ts/stores";
+    import {get} from "svelte/store";
+    import {Settings} from "../../ts/settings";
 
-    let mediaView: boolean = false;
     let file: File | undefined = undefined;
+    let codeElement: HTMLPreElement;
+    let cursor: HTMLDivElement;
 
-    const unsub = openedFile.subscribe((newFile) => {
-        file = newFile;
-        mediaView = isMediaFile(file?.filename);
-    });
-
-    function isMediaFile(fileName: string | undefined): boolean {
-        if (!fileName) {
-            return false;
-        }
-
-        const mediaExtensions = ['mp3', 'mp4', 'avi', 'mov', 'wmv', 'wav', 'flac', 'mkv', 'ogg', 'webm', 'aac'];
-        const fileExtension = fileName.split('.').pop()!.toLowerCase();
-        return mediaExtensions.includes(fileExtension);
-    }
-
+    const unsub = openedFile.subscribe((newFile) => file = newFile);
     onDestroy(unsub);
 
-    let codeElement: HTMLElement;
-    let cursor: HTMLElement;
-    let fileContent: string;
-
-    function moveCursor(line: number, column: number) {
-    }
+    $: keymap = get(Settings.ACTIVE_KEYMAP);
+    let currentQuery: KeybindQuery | undefined = undefined;
+    let currentKeybind: Keybind | undefined = undefined;
+    let capturing: string[] = [];
 
     function onKeyDown(event: KeyboardEvent) {
-        moveCursor(0, 0);
+        if (event.key === "Shift" 
+            || event.key === "Control" 
+            || event.key === "Alt"
+            || event.key === "Super") {
+            return;
+        }
+        
+        const key = convertKeyboardEventToKey(event);
+        
+        if (currentKeybind) {
+            capturing.push(event.key);
+            if (currentKeybind.captureLength >= capturing.length) {
+                currentKeybind.callback(capturing);
+                currentKeybind = undefined;
+                capturing = [];
+            }
+            return;
+        }
+        
+        if (!currentQuery) {
+            currentQuery = keymap.get(key);
+        } else {
+            currentQuery.update(key);
+        }
+
+        if (currentQuery) {
+            const keybind = currentQuery.conclude();
+
+            if (!keybind) {
+                return;
+            }
+
+            currentQuery = undefined;
+
+            if (keybind.captureLength === 0 ) {
+                keybind.callback([""]);
+            } else {
+                currentKeybind = keybind;
+            }
+        }
+    }
+
+    function convertKeyboardEventToKey(event: KeyboardEvent): Key {
+        const key: KeyDetailed = {
+            key: event.key,
+            modifier: new Set()
+        };
+
+        if (event.ctrlKey) {
+            key.modifier!.add("Ctrl");
+        }
+
+        if (event.altKey) {
+            key.modifier!.add("Alt");
+        }
+
+        if (event.shiftKey) {
+            key.modifier!.add("Shift");
+        }
+
+        return key.modifier!.size === 0 ? event.key : key;
     }
 
     async function openTextFile(file: File) {
-        let result = await FileHelper.openTextFile(file);
-        fileContent = result;
-        return result;
+        return await FileHelper.openTextFile(file);
     }
 </script>
 
 <div class="Editor">
     {#if file}
-        {#if mediaView}
-            <span>Not yet implemented</span>
-        {:else}
-            {#await openTextFile(file)}
-                <span>Loading Text</span>
-            {:then content}
-                <div>
-                    <pre id="text-area" bind:this={codeElement}>{content}</pre>
-                    <div id="cursor" bind:this={cursor}/>
-                </div>
-            {:catch err}
-                <span>Failed to load file {err}</span>
-            {/await}
-        {/if}
+        {#await openTextFile(file)}
+            <span>Loading Text</span>
+        {:then content}
+            <div>
+                <pre id="text-area" bind:this={codeElement}>{content}</pre>
+                <div id="cursor" bind:this={cursor}/>
+            </div>
+        {:catch err}
+            <span>Failed to load file {err}</span>
+        {/await}
     {/if}
 </div>
 

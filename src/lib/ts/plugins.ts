@@ -4,11 +4,6 @@ import type {RagnarokPlugin, PluginPath, Keymap} from "ragnarok-api";
 import {fetch} from "@tauri-apps/api/http";
 import {loadingPlugin} from "./stores";
 
-export interface PluginState {
-    path: PluginPath;
-    enabled: boolean;
-}
-
 export namespace Plugins {
     let pluginsDir: string | undefined = undefined;
     let pluginsLockDir: string | undefined = undefined;
