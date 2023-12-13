@@ -5,6 +5,7 @@
     import {openedFile} from "../../ts/stores";
     import {get} from "svelte/store";
     import {Settings} from "../../ts/settings";
+    import {LSP} from "../../ts/lsp";
 
     let file: File | undefined = undefined;
     let codeElement: HTMLPreElement;
@@ -83,7 +84,10 @@
     }
 
     async function openTextFile(file: File) {
-        return await FileHelper.openTextFile(file);
+        const content = await FileHelper.openTextFile(file);
+        const ft = FileHelper.getFileExtension(file);
+        await LSP.startServer(ft);
+        return content;
     }
 </script>
 

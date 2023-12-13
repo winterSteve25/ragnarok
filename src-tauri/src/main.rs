@@ -10,7 +10,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             fs::get_files_in_path,
             fs::open_text_file,
-            lsp::start_client,
+            lsp::start_ls,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
