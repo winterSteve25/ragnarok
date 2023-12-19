@@ -15,7 +15,8 @@
     "ragnarok-api": "^0.1.2",
     "svelte-simple-modal": "^1.6.1",
     "svelte-splitpanes": "^0.8.0",
-    "typescript": "^5.3.2"
+    "typescript": "^5.3.2",
+    "vscode-languageserver-types": "^3.17.5"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.4.2",

@@ -11,7 +11,7 @@ use crate::lsp::client::Client;
 use crate::lsp::transport::Transport;
 
 #[tauri::command]
-pub fn start_ls(lsp_bin: &str, args: Vec<String>, env: HashMap<String, String>, workspace_dir: Option<String>, initialization_options: Option<Value>, capabilities: ClientCapabilities) -> Result<(), LSPError> {
+pub fn start_ls(lsp_bin: &str, args: Vec<String>, env: HashMap<String, String>, workspace_dir: Option<String>, initialization_options: Option<Value>, capabilities: Option<ClientCapabilities>) -> Result<(), LSPError> {
     let mut process = Command::new(lsp_bin)
         .args(args)
         .envs(env)

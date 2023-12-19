@@ -28,7 +28,7 @@ impl Transport {
         
         if len_written != load.len() { 
             return Err(LSPError::BufferUnfinished);
-        } 
+        }
         
         Ok(())
     }

@@ -18,7 +18,7 @@ impl Client {
         }
     }
 
-    pub fn initialize(&mut self, workspace_dir: Option<Url>, initialization_options: Option<Value>, capabilities: ClientCapabilities) -> Result<(), LSPError> {
+    pub fn initialize(&mut self, workspace_dir: Option<Url>, initialization_options: Option<Value>, capabilities: Option<ClientCapabilities>) -> Result<(), LSPError> {
         println!("Client initialized");
 
         self.transport.send(&InitializeParams {
@@ -29,7 +29,7 @@ impl Client {
             process_id: Some(self.process.id()),
             root_uri: workspace_dir,
             initialization_options,
-            capabilities,
+            capabilities: capabilities.unwrap_or_default(),
             workspace_folders: None,
             locale: None,
             ..Default::default()
