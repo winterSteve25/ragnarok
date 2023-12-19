@@ -1,7 +1,7 @@
 import {type Key, Keymap, Keybind, type PluginPath} from "ragnarok-api";
 import {Plugins} from "./plugins";
 import {appConfigDir} from "@tauri-apps/api/path";
-import {exists, readTextFile, writeTextFile} from "@tauri-apps/api/fs";
+import {createDir, exists, readTextFile, writeTextFile} from "@tauri-apps/api/fs";
 import {type Writable, writable} from "svelte/store";
 
 export interface Setting {
@@ -13,6 +13,8 @@ export interface Setting {
 export namespace Settings {
 
     let settingsPath: string | undefined = undefined;
+    let configDir: string | undefined = undefined;
+    
     const DEFAULT_SETTINGS: Setting = {
         plugins: [],
         keyOverrides: {},
@@ -30,15 +32,23 @@ export namespace Settings {
         
         return keymap;
     }
-
+    
     export async function loadSettings() {
+        
+        if (!configDir) {
+            configDir = await appConfigDir();
+        }
+        
+        if (!(await exists(configDir))) {
+            await createDir(configDir);
+        }
+        
         if (!settingsPath) {
-            settingsPath = (await appConfigDir()) + "settings.json";
+            settingsPath = (configDir) + "settings.json";
         }
 
         if (!(await exists(settingsPath))) {
             await writeTextFile(settingsPath, JSON.stringify(DEFAULT_SETTINGS));
-            return;
         }
 
         const settings: Setting = JSON.parse(await readTextFile(settingsPath));

@@ -70,7 +70,13 @@ export namespace Plugins {
 
     async function getCompiledPluginDirectory(name: string) {
         if (!pluginsDir) {
-            pluginsDir = await appLocalDataDir() + "plugins";
+            const localDataDir = await appLocalDataDir();
+            
+            if (!(await exists(localDataDir))) {
+                await createDir(localDataDir);
+            }
+            
+            pluginsDir = localDataDir + "plugins";
             pluginsLockDir = pluginsDir + "plugins.lock.json";
 
             if (!(await exists(pluginsDir))) {
