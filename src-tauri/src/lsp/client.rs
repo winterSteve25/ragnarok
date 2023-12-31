@@ -1,6 +1,7 @@
 use std::process::Child;
 use lsp_types::{ClientCapabilities, ClientInfo, InitializeParams, Url};
 use serde_json::Value;
+use tauri::PackageInfo;
 use crate::errors::LSPError;
 use crate::lsp::transport::Transport;
 use crate::PACKAGE_INFO;
@@ -24,7 +25,10 @@ impl Client {
         self.transport.send(&InitializeParams {
             client_info: Some(ClientInfo {
                 name: "Ragnarok Editor".to_string(),
-                version: Some(unsafe { PACKAGE_INFO.clone().unwrap().version.to_string() }),
+                version: Some(unsafe { match &PACKAGE_INFO {
+                    Some(pkg) => pkg.version.to_string(),
+                    None => "0.0.0".to_string()
+                } }),
             }),
             process_id: Some(self.process.id()),
             root_uri: workspace_dir,
