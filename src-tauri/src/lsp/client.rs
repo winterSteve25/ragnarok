@@ -19,16 +19,13 @@ impl Client {
         }
     }
 
-    pub fn initialize(&mut self, workspace_dir: Option<Url>, initialization_options: Option<Value>, capabilities: Option<ClientCapabilities>) -> Result<(), LSPError> {
+    pub fn initialize(&mut self, workspace_dir: Option<Url>, initialization_options: Option<Value>, capabilities: Option<ClientCapabilities>, package_info: &PackageInfo) -> Result<(), LSPError> {
         println!("Client initialized");
 
-        self.transport.send(&InitializeParams {
+        self.transport.send("initialize", &InitializeParams {
             client_info: Some(ClientInfo {
                 name: "Ragnarok Editor".to_string(),
-                version: Some(unsafe { match &PACKAGE_INFO {
-                    Some(pkg) => pkg.version.to_string(),
-                    None => "0.0.0".to_string()
-                } }),
+                version: Some(package_info.version.to_string()),
             }),
             process_id: Some(self.process.id()),
             root_uri: workspace_dir,

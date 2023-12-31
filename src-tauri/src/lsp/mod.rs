@@ -6,12 +6,13 @@ use std::io::{BufReader, BufWriter};
 use std::process::{Command, Stdio};
 use lsp_types::{ClientCapabilities, Url};
 use serde_json::Value;
+use tauri::AppHandle;
 use crate::errors::LSPError;
 use crate::lsp::client::Client;
 use crate::lsp::transport::Transport;
 
 #[tauri::command]
-pub fn start_ls(lsp_bin: &str, args: Vec<String>, env: HashMap<String, String>, workspace_dir: Option<String>, initialization_options: Option<Value>, capabilities: Option<ClientCapabilities>) -> Result<(), LSPError> {
+pub fn start_ls(lsp_bin: &str, args: Vec<String>, env: HashMap<String, String>, workspace_dir: Option<String>, initialization_options: Option<Value>, capabilities: Option<ClientCapabilities>, app_handle: AppHandle) -> Result<(), LSPError> {
     let mut process = Command::new(lsp_bin)
         .args(args)
         .envs(env)
@@ -27,5 +28,5 @@ pub fn start_ls(lsp_bin: &str, args: Vec<String>, env: HashMap<String, String>, 
     let transport = Transport::start(input, output, err);
 
     let mut client = Client::new(transport, process);
-    client.initialize(workspace_dir.map(|str| Url::parse(&str)).transpose().unwrap_or(None), initialization_options, capabilities)
+    client.initialize(workspace_dir.map(|str| Url::parse(&str)).transpose().unwrap_or(None), initialization_options, capabilities, app_handle.package_info())
 }
