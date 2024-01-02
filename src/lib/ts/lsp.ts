@@ -14,6 +14,7 @@ export namespace LSP {
         }
         
         await invoke("start_ls", { 
+            language: lang,
             lspBin: map.get(lang),
             args: [],
             env: {},
