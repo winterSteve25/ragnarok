@@ -17,6 +17,7 @@ fn main() {
             fs::get_files_in_path,
             fs::open_text_file,
             lsp::start_ls,
+            lsp::semantic_tokens,
         ])
         .setup(|_app| {
             env_logger::init();

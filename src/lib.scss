@@ -19,6 +19,15 @@
     background-color: var(--code-background);
     cursor: pointer;
   }
+
+  span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }
 
 @mixin selectable {

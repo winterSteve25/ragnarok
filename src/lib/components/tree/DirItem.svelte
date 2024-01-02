@@ -36,12 +36,6 @@
       padding: 8px 16px;
       box-sizing: border-box;
 
-      span {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-
       img {
         min-width: 16px;
         max-width: 16px;

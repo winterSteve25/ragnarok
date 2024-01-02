@@ -1,34 +1,14 @@
 <script lang="ts">
     import {Pane, Splitpanes} from "svelte-splitpanes";
     import FileExplorer from "./lib/components/tree/FileExplorer.svelte";
-    import Editor from "./lib/components/editor/Editor.svelte";
 
-    import Modal from 'svelte-simple-modal';
-    import {loadingPlugin, settingsModal} from "./lib/ts/stores";
-    import type {FadeParams} from "svelte/transition";
+    // @ts-ignore
+    import {loadingPlugin} from "./lib/ts/stores";
     import {Settings} from "./lib/ts/settings";
-
-    const transitionProps: FadeParams = {
-        duration: 200,
-    }
-
-    const windowStyle: Record<string, string> = {
-        "background-color": "var(--editor-background)",
-        "color": "var(--editor-foreground)",
-        "width": "60%",
-        "min-height": "80%",
-        "margin": "0",
-    }
+    import View from "./lib/components/view/View.svelte";
+    import SettingsModal from "./lib/components/modals/SettingsModal.svelte";
+    import CommandPaletteModal from "./lib/components/modals/CommandPaletteModal.svelte";
     
-    const wrapperStyle: Record<string, string> = {
-        "width": "100%",
-        "min-height": "100%",
-        "margin": "0",
-        "display": "flex",
-        "align-items": "center",
-        "justify-content": "center",
-    }
-
     async function load() {
         await Settings.loadSettings();
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -54,17 +34,11 @@
                 <FileExplorer/>
             </Pane>
             <Pane minSize={20}>
-                <Editor/>
+                <View/>
             </Pane>
         </Splitpanes>
-        <Modal
-            show={$settingsModal}
-            transitionBgProps={transitionProps}
-            transitionWindowProps={transitionProps}
-            styleWindow={windowStyle}
-            styleWindowWrap={wrapperStyle}
-            closeButton={false}
-        />
+        <SettingsModal/>
+        <CommandPaletteModal/>
     {:catch err}
         <div class="center">
             {err.message}<br/><br/>
@@ -81,7 +55,7 @@
     height: 100%;
     width: 100%;
   }
-  
+
   .center {
     width: 100%;
     height: 100%;

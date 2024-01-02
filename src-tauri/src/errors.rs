@@ -51,8 +51,8 @@ pub enum LSPError {
     #[error("{0}")]
     ResponseError(ResponseError),
     
-    #[error("LS already running")]
-    ServerRunning,
+    #[error("No LS for the language of {0} extension is running")]
+    LSNotRunning(String),
 }
 
 impl Serialize for LSPError {

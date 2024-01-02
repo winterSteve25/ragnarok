@@ -1,7 +1,9 @@
 use std::process::Child;
 use log::{error, info};
 use lsp_types::lsif::Id;
-use lsp_types::{ClientCapabilities, ClientInfo, InitializedParams, InitializeParams, InitializeResult, Url};
+use lsp_types::{ClientCapabilities, ClientInfo, InitializedParams, InitializeParams, InitializeResult, ServerCapabilities, Url};
+use lsp_types::notification::{Initialized, Notification};
+use lsp_types::request::{Initialize, Request};
 use serde::Serialize;
 use serde_json::Value;
 use tauri::PackageInfo;
@@ -13,10 +15,12 @@ use tokio::sync::mpsc::error::TryRecvError;
 use tokio::task::block_in_place;
 
 pub struct LSPClient {
+    id: i32,
     sender: UnboundedSender<(Message, Option<UnboundedSender<ResponseMessage<Value>>>)>,
     process: Child,
     name: String,
-    id: i32,
+    
+    pub server_capabilities: Option<ServerCapabilities>,
 }
 
 impl Drop for LSPClient {
@@ -35,6 +39,7 @@ impl LSPClient {
             process,
             name,
             id: i32::MIN,
+            server_capabilities: None,
         }
     }
     
@@ -43,11 +48,12 @@ impl LSPClient {
         self.request::<InitializedParams>("shutdown", None).await?;
         self.notify::<InitializedParams>("exit", None).await?;
         self.process.kill().expect(&*format!("Failed to shutdown the {} language server", self.name));
+        self.server_capabilities = None;
         Ok(())
     }
 
     pub async fn start(&mut self, workspace_dir: Option<Url>, initialization_options: Option<Value>, capabilities: Option<ClientCapabilities>, package_info: &PackageInfo) -> Result<(), LSPError> {
-        let result = self.request("initialize", Some(InitializeParams {
+        let result = self.request(Initialize::METHOD, Some(InitializeParams {
             client_info: Some(ClientInfo {
                 name: "Ragnarok Editor".to_string(),
                 version: Some(package_info.version.to_string()),
@@ -65,9 +71,10 @@ impl LSPClient {
             return Err(LSPError::ResponseError(err));
         }
 
-        let _result: InitializeResult = serde_json::from_value(result.result)?;
-        self.notify("initialized", Some(InitializedParams {})).await?;
-
+        let result: InitializeResult = serde_json::from_value(result.result)?;
+        self.notify(Initialized::METHOD, Some(InitializedParams {})).await?;
+        self.server_capabilities = Some(result.capabilities);
+        
         Ok(())
     }
 

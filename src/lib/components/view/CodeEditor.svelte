@@ -6,10 +6,9 @@
     import {get} from "svelte/store";
     import {Settings} from "../../ts/settings";
     import {LSP} from "../../ts/lsp";
+    import {renderEditor} from "./codeEditor";
 
     let file: File | undefined = undefined;
-    let codeElement: HTMLPreElement;
-    let cursor: HTMLDivElement;
 
     const unsub = openedFile.subscribe((newFile) => file = newFile);
     onDestroy(unsub);
@@ -20,6 +19,13 @@
     let capturing: string[] = [];
 
     function onKeyDown(event: KeyboardEvent) {
+        
+        const element = event.target as HTMLElement;
+        
+        if (element && element.tagName.toLowerCase() === "input") {
+            return;
+        }
+        
         if (event.key === "Shift" 
             || event.key === "Control" 
             || event.key === "Alt"
@@ -27,6 +33,7 @@
             return;
         }
         
+        event.preventDefault();
         const key = convertKeyboardEventToKey(event);
         
         if (currentKeybind) {
@@ -86,8 +93,18 @@
     async function openTextFile(file: File) {
         const content = await FileHelper.openTextFile(file);
         const ft = FileHelper.getFileExtension(file);
-        await LSP.startServer(ft);
-        return content;
+        const serverCapability = await LSP.startServer(ft);
+        
+        if (serverCapability) {
+            return {
+                serverCapability: serverCapability,
+                content: content,
+            };
+        }
+
+        return {
+            content: content
+        };
     }
 </script>
 
@@ -95,18 +112,21 @@
     {#if file}
         {#await openTextFile(file)}
             <span>Loading Text</span>
-        {:then content}
-            <div>
-                <pre id="text-area" bind:this={codeElement}>{content}</pre>
-                <div id="cursor" bind:this={cursor}/>
-            </div>
+        {:then {serverCapability, content}}
+            {#if serverCapability && serverCapability.semanticTokensProvider}
+                <div id="code">
+                    <!--{@html renderEditor(content).outerHTML}-->
+                </div>
+            {:else}
+                <pre id="code">{content}</pre>
+            {/if}
         {:catch err}
             <span>Failed to load file {err}</span>
         {/await}
     {/if}
 </div>
 
-<svelte:window on:keydown|preventDefault={onKeyDown}/>
+<svelte:window on:keydown={onKeyDown}/>
 
 <style lang="scss">
   .Editor {
@@ -119,7 +139,7 @@
     box-sizing: border-box;
     text-overflow: clip;
 
-    #text-area {
+    #code {
       padding: 0;
       margin: 0;
       font-family: 'JetBrainsMonoNL NF', monospace;
@@ -128,10 +148,12 @@
     }
 
     #cursor {
-      position: absolute;
+      position: relative;
       width: 2px;
       height: 20px;
       background-color: var(--editor-foreground);
+      top: 0;
+      left: 0;
     }
   }
 </style>

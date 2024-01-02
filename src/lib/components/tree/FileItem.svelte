@@ -34,11 +34,5 @@
       max-height: 16px;
       fill: var(--editor-foreground);
     }
-    
-    span {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
   }
 </style>
