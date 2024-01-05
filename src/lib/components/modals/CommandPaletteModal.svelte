@@ -10,19 +10,19 @@
     }
 
     const windowStyle: Record<string, string> = {
-        "background-color": "var(--editor-background)",
+        "background-color": "rgba(0, 0, 0, 0)",
         "color": "var(--editor-foreground)",
         "width": "60%",
-        "min-height": "10%",
+        "min-height": "80%",
         "margin": "0",
     }
 
     const wrapperStyle: Record<string, string> = {
         "width": "100%",
         "min-height": "100%",
-        "margin-bottom": "10%",
+        "margin": "0",
         "display": "flex",
-        "align-items": "end",
+        "align-items": "center",
         "justify-content": "center",
     }
     
