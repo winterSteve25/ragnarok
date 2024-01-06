@@ -1,6 +1,6 @@
 <script lang="ts">
     import FileTree from "./FileTree.svelte";
-    import {Modals} from "../../ts/modalsManager.js";
+    import {Modals} from "../../ts/modals.js";
     export let currentPath: string = "~/Dev/ragnarok";
 </script>
 
@@ -39,7 +39,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        border-radius: 4px;
+        border-radius: var(--border-radius);
         padding: 8px;
       }
     }

@@ -1,11 +1,11 @@
 <script lang="ts">
     import type {File} from "ragnarok-api";
-    import {openedFile} from "../../ts/stores";
+    import {OPENED_FILE} from "../../ts/stores";
 
     export let file: File;
 </script>
 
-<button class="FileItem" on:click={() => openedFile.set(file)}>
+<button class="FileItem" on:click={() => OPENED_FILE.set(file)}>
 <!--    <img alt="file-icon" src={Theming.getIconFromLoadedTheme(file)}/>-->
     <span>{file.filename}</span>
 </button>
@@ -25,9 +25,6 @@
     height: 32px;
     width: 100%;
 
-    padding: 8px 16px;
-    box-sizing: border-box;
-    
     img {
       min-width: 16px;
       max-width: 16px;

@@ -1,8 +1,8 @@
 import {appLocalDataDir} from "@tauri-apps/api/path";
 import {createDir, exists, readTextFile, writeTextFile} from "@tauri-apps/api/fs";
-import type {RagnarokPlugin, PluginPath, Keymap} from "ragnarok-api";
+import {type RagnarokPlugin, type PluginPath, type Keymap, Command} from "ragnarok-api";
 import {fetch} from "@tauri-apps/api/http";
-import {loadingPlugin} from "./stores";
+import {LOADING_PLUGIN} from "./stores";
 
 export namespace Plugins {
     let pluginsDir: string | undefined = undefined;
@@ -12,7 +12,7 @@ export namespace Plugins {
 
     export async function loadPlugin(plugin: PluginPath) {
         if (plugin.path) {
-            loadingPlugin.set(plugin.path);
+            LOADING_PLUGIN.set(plugin.path);
 
             if (plugin.path.endsWith("main.js")) {
                 await loadCompiledPlugin(plugin.path, plugin.path);
@@ -24,7 +24,7 @@ export namespace Plugins {
             
             return;
         } else if (plugin.git) {
-            loadingPlugin.set(plugin.git);
+            LOADING_PLUGIN.set(plugin.git);
 
             await downloadPlugin(plugin.git, plugin.branch);
 
@@ -38,10 +38,21 @@ export namespace Plugins {
         throw new Error("Invalid plugin path, no git or path specified");
     }
 
-    export async function registerKeymap(keymap: Keymap) {
+    export async function registerKeybinds(keymap: Keymap) {
         for (const [_path, plugin] of LOADED_PLUGINS.entries()) {
             await plugin.registerKeybinds(keymap);
         }
+    }
+
+    export async function registerCommands(): Promise<Command[]> {
+        const result: Command[] = [];
+        
+        for (const [_path, plugin] of LOADED_PLUGINS.entries()) {
+            const cmds = await plugin.registerCommands();
+            cmds.concat(cmds);
+        }
+        
+        return result;
     }
 
     async function loadCompiledPlugin(name: string, path: string) {

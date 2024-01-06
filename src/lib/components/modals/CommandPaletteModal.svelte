@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {commandPaletteModal} from "../../ts/stores.js";
+    import {COMMAND_PALETTE_MODAL} from "../../ts/stores.js";
 
     // @ts-ignore
     import Modal from "svelte-simple-modal";
@@ -10,11 +10,14 @@
     }
 
     const windowStyle: Record<string, string> = {
-        "background-color": "rgba(0, 0, 0, 0)",
+        "background-color": "var(--editor-background)",
         "color": "var(--editor-foreground)",
-        "width": "60%",
+        "width": "40%",
         "min-height": "80%",
         "margin": "0",
+    }
+    
+    const contentStyle: Record<string, string> = {
     }
 
     const wrapperStyle: Record<string, string> = {
@@ -32,11 +35,12 @@
 </script>
 
 <Modal
-        show={$commandPaletteModal}
+        show={$COMMAND_PALETTE_MODAL}
         transitionBgProps={transition}
         transitionWindowProps={transition}
         styleWindow={windowStyle}
         styleWindowWrap={wrapperStyle}
+        styleContent={contentStyle}
         styleBg={bgStyle}
         closeButton={false}
 />

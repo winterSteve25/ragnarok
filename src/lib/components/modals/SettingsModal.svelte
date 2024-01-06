@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {settingsModal} from "../../ts/stores.js";
+    import {SETTINGS_MODAL} from "../../ts/stores.js";
     
     // @ts-ignore
     import Modal from "svelte-simple-modal";
@@ -28,7 +28,7 @@
 </script>
 
 <Modal
-        show={$settingsModal}
+        show={$SETTINGS_MODAL}
         transitionBgProps={transition}
         transitionWindowProps={transition}
         styleWindow={windowStyle}

@@ -1,10 +1,17 @@
+@mixin interactable {
+  padding: var(--interactable-padding);
+  box-sizing: border-box;
+  color: var(--editor-foreground);
+}
+
 @mixin button {
+  @include interactable;
+  
   gap: 4px;
   
   transition: ease-in-out 50ms;
   background-color: rgba(0, 0, 0, 0);
   outline: none;
-  color: var(--editor-foreground);
 
   border: none;
 

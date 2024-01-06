@@ -3,11 +3,12 @@
     import FileExplorer from "./lib/components/tree/FileExplorer.svelte";
 
     // @ts-ignore
-    import {loadingPlugin} from "./lib/ts/stores";
+    import {LOADING_PLUGIN} from "./lib/ts/stores";
     import {Settings} from "./lib/ts/settings";
     import View from "./lib/components/view/View.svelte";
     import SettingsModal from "./lib/components/modals/SettingsModal.svelte";
     import CommandPaletteModal from "./lib/components/modals/CommandPaletteModal.svelte";
+    import {KeyboardControl} from "./lib/ts/control";
     
     async function load() {
         await Settings.loadSettings();
@@ -18,9 +19,9 @@
 <main>
     {#await load()}
         <div class="center">
-            {#if $loadingPlugin}
+            {#if $LOADING_PLUGIN}
                 <h1>
-                    Loading {$loadingPlugin}
+                    Loading {$LOADING_PLUGIN}
                 </h1>
             {:else}
                 <h1>
@@ -49,6 +50,8 @@
         </div>
     {/await}
 </main>
+
+<svelte:window on:keypress={KeyboardControl.onKeyDown}/>
 
 <style lang="scss">
   main {

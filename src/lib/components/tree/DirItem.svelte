@@ -33,9 +33,6 @@
       height: 32px;
       width: 100%;
 
-      padding: 8px 16px;
-      box-sizing: border-box;
-
       img {
         min-width: 16px;
         max-width: 16px;
