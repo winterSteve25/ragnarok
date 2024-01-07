@@ -1,7 +1,11 @@
 import {type Key, type Keybind, KeybindQuery, type KeyDetailed} from "ragnarok-api";
 import {Settings} from "./settings";
+import {type Writable, writable} from "svelte/store";
 
 export namespace KeyboardControl {
+    export const CURSOR_POS: Writable<number> = writable(0);
+    export const CURSOR_LINE: Writable<number> = writable(0);
+    
     let currentQuery: KeybindQuery | undefined = undefined;
     let currentKeybind: Keybind | undefined = undefined;
     let capturing: string[] = [];

@@ -4,8 +4,23 @@
     import {type File} from "ragnarok-api";
     import {OPENED_FILE} from "../../ts/stores";
     import {LSP} from "../../ts/lsp";
+    import {renderPlainText, renderSemanticTokens} from "./codeEditor";
+    import {KeyboardControl} from "../../ts/control.js";
+    import {get} from "svelte/store";
 
     let file: File | undefined = undefined;
+    
+    let lineHeight: number | undefined;
+    let cursor: HTMLDivElement;
+    
+    $: {
+        if (cursor) {
+            const top = get(KeyboardControl.CURSOR_LINE) * (lineHeight ? lineHeight : 0);
+            cursor.style.left = `calc(${get(KeyboardControl.CURSOR_POS)} * 1ch)`;
+            cursor.style.top = `${top}px`;
+            cursor.style.height = `${lineHeight}px`;
+        }
+    }
 
     const unsub = OPENED_FILE.subscribe((newFile) => file = newFile);
     onDestroy(unsub);
@@ -26,6 +41,14 @@
             content: content
         };
     }
+    
+    function setLineHeight(_node: HTMLDivElement) {
+        const codeLine = document.querySelector(".code-line");
+        if (codeLine) {
+            const heightInPixels = getComputedStyle(codeLine).height;
+            lineHeight = +heightInPixels.slice(0, heightInPixels.length - 2);
+        }
+    }
 </script>
 
 <div class="Editor">
@@ -33,13 +56,14 @@
         {#await openTextFile(file)}
             <span>Loading Text</span>
         {:then {serverCapability, content}}
-            {#if serverCapability && serverCapability.semanticTokensProvider}
-                <div id="code">
-                    <!--{@html renderEditor(content).outerHTML}-->
-                </div>
-            {:else}
-                <pre id="code">{content}</pre>
-            {/if}
+            <div id="code-document" use:setLineHeight>
+                {#if serverCapability && serverCapability.semanticTokensProvider}
+                    {@html renderSemanticTokens(content, []).outerHTML}
+                {:else}
+                    {@html renderPlainText(content).outerHTML}
+                {/if}
+            </div>
+            <div id="cursor" bind:this={cursor}/>
         {:catch err}
             <span>Failed to load file {err}</span>
         {/await}
@@ -51,27 +75,44 @@
     width: 100%;
     min-height: 100%;
     height: auto;
-    background-color: var(--code-background);
 
-    padding: 32px;
     box-sizing: border-box;
     text-overflow: clip;
+    
+    position: relative;
+    background-color: var(--code-background);
 
-    #code {
+    #code-document {
       padding: 0;
       margin: 0;
       font-family: 'JetBrainsMonoNL NF', monospace;
       font-size: 18px;
       line-height: 100%;
+      
+      :global(.code-line) {
+        padding-top: 2px;
+        padding-bottom: 2px;
+        box-sizing: border-box;
+      }
     }
 
     #cursor {
-      position: relative;
+      position: absolute;
       width: 2px;
-      height: 20px;
-      background-color: var(--editor-foreground);
-      top: 0;
-      left: 0;
+      background-color: white;
+      animation: blink 1.2s infinite step-end;
+    }
+
+    @keyframes blink {
+      0% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
     }
   }
 </style>
