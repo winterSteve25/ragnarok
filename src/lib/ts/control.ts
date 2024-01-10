@@ -10,8 +10,6 @@ export namespace KeyboardControl {
     let currentKeybind: Keybind | undefined = undefined;
     let capturing: string[] = [];
     
-    let insertMode: boolean = false;
-
     export function onKeyDown(event: KeyboardEvent) {
         const element = event.target as HTMLElement;
 
@@ -32,7 +30,7 @@ export namespace KeyboardControl {
         if (currentKeybind) {
             capturing.push(event.key);
             if (currentKeybind.captureLength >= capturing.length) {
-                currentKeybind.callback(capturing);
+                currentKeybind.onTrigger(, capturing);
                 currentKeybind = undefined;
                 capturing = [];
             }
@@ -55,7 +53,7 @@ export namespace KeyboardControl {
             currentQuery = undefined;
 
             if (keybind.captureLength === 0 ) {
-                keybind.callback([""]);
+                keybind.onTrigger(, []);
             } else {
                 currentKeybind = keybind;
             }
