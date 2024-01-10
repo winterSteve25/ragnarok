@@ -2,10 +2,9 @@
     import {onDestroy} from "svelte";
     import {FileHelper} from "../../ts/fileHelper";
     import {type File} from "ragnarok-api";
-    import {OPENED_FILE} from "../../ts/stores";
+    import {OPENED_FILE, EDITOR_CONTEXT} from "../../ts/stores";
     import {LSP} from "../../ts/lsp";
     import {renderPlainText, renderSemanticTokens} from "./codeEditor";
-    import {KeyboardControl} from "../../ts/control.js";
     import {get} from "svelte/store";
 
     let file: File | undefined = undefined;
@@ -15,8 +14,9 @@
     
     $: {
         if (cursor) {
-            const top = get(KeyboardControl.CURSOR_LINE) * (lineHeight ? lineHeight : 0);
-            cursor.style.left = `calc(${get(KeyboardControl.CURSOR_POS)} * 1ch)`;
+			const context = get(EDITOR_CONTEXT);
+            const top = context.cursorLine * (lineHeight ? lineHeight : 0);
+            cursor.style.left = `calc(${context.cursorPosition} * 1ch)`;
             cursor.style.top = `${top}px`;
             cursor.style.height = `${lineHeight}px`;
         }
@@ -27,6 +27,12 @@
 
     async function openTextFile(file: File) {
         const content = await FileHelper.openTextFile(file);
+
+		EDITOR_CONTEXT.update((ctx) => {
+			ctx.currentBuffer = content.split("\n");
+			return ctx;
+		});
+
         const ft = FileHelper.getFileExtension(file);
         const serverCapability = await LSP.startServer(ft);
 

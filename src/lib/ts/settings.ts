@@ -1,9 +1,9 @@
-import {type Key, Keymap, Keybind, type PluginPath, Command} from "ragnarok-api";
+import {type Key, Keymap, type PluginPath, Command, keyToString} from "ragnarok-api";
 import {Plugins} from "./plugins";
 import {appConfigDir} from "@tauri-apps/api/path";
 import {createDir, exists, readTextFile, writeTextFile} from "@tauri-apps/api/fs";
 import {type Writable, writable} from "svelte/store";
-import {Modals} from "./modals";
+import { Modals } from "./modals";
 
 export interface Setting {
     plugins: Array<PluginPath>;
@@ -29,13 +29,25 @@ export namespace Settings {
     function createDefaultKeymap() {
         const keymap = new Keymap();
 
-        keymap.register("motion.word", Keybind.by("Word Motion", "w")
-            .callBack((_) => console.log("Forward")));
+        keymap.create("motion.word", "w")
+			.describe("Moves to the next word")
+			.motion()
+			.register((ctx, _capture) => {
+				console.log(ctx);
 
-        keymap.register("open.command-palette", Keybind.by("Open Command Palette", {
-            key: ":",
-            modifier: new Set(["Shift"])
-        }).callBack((_) => Modals.openCommandPalette()));
+				const line = ctx.currentBuffer[ctx.cursorLine];
+				const next = line.substring(ctx.cursorPosition).indexOf(" ");
+
+				if (next === -1 && ctx.cursorLine < ctx.currentBuffer.length) {
+					return [0, ctx.cursorLine + 1];
+				}
+
+				return [next === -1 ? ctx.cursorPosition : next + ctx.cursorPosition, ctx.cursorLine];
+			});
+
+		keymap.create("open.cmd_palette", ":")
+			.describe("Opens the command palette")
+			.register((_setter, _data) => Modals.openCommandPalette());
 
         return keymap;
     }
@@ -83,8 +95,8 @@ export namespace Settings {
             const keybind = keymap.getById(id);
 
             if (keybind) {
-                keybind.setTrigger(overrides[0]);
-                keybind.setSequence(overrides.slice(1));
+                keybind.trigger = keyToString(overrides[0]);
+                keybind.sequence = overrides.slice(1).map((e) => keyToString(e));
             }
         }
         
