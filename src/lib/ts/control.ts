@@ -1,28 +1,21 @@
-import {type Key, type Keybind, KeybindQuery, type KeyDetailed, type EditorContext, MotionKeybind} from "ragnarok-api";
-import {Settings} from "./settings";
+import { 
+	type Key, 
+	type Keybind,
+	KeybindQuery,
+	type KeyDetailed,
+	type EditorContext,
+	MotionKeybind, 
+    ActionKeybind
+} from "ragnarok-api";
+import { Settings } from "./settings";
 import { EDITOR_CONTEXT } from "./stores";
+import { get } from "svelte/store";
 
 export namespace KeyboardControl {
     
+	let currentInputBuffer: (Keybind | string | number)[] = [];
     let currentQuery: KeybindQuery | undefined = undefined;
-    let currentKeybind: Keybind | undefined = undefined;
-    let capturing: string[] = [];
 	
-	function getCaptureLength(keybind: Keybind) {
-		if (keybind instanceof MotionKeybind) {
-			return (keybind as MotionKeybind).captureLength;
-		}
-		
-		return 0;
-	}
-
-	function ctxSetter(setter: (ctx: EditorContext) => void) {
-		EDITOR_CONTEXT.update((ctx) => {
-			setter(ctx);
-			return ctx;
-		});
-	}
-    
     export function onKeyDown(event: KeyboardEvent) {
         const element = event.target as HTMLElement;
 
@@ -38,57 +31,84 @@ export namespace KeyboardControl {
         }
 
         event.preventDefault();
-        const key = convertKeyboardEventToKey(event);
 
-        if (currentKeybind) {
-            capturing.push(event.key);
-            if (getCaptureLength(currentKeybind) >= capturing.length) {
-                currentKeybind.onTrigger(ctxSetter, {
-					capture: capturing
-				});
-                currentKeybind = undefined;
-                capturing = [];
-            }
-            return;
-        }
+		if (!currentQuery) {
+			currentQuery = Settings.activeKeymap.get(convertKeyboardEventToKey(event));
+		}
 
-        if (!currentQuery) {
-            currentQuery = Settings.activeKeymap.get(key);
-        } else {
-            currentQuery.update(key);
-        }
+		if (currentQuery) {
+			const k = currentQuery.conclude();
+			if (k) {
+				currentInputBuffer.push(k);
+				currentQuery = undefined;
+				tryExecute();
+			}
+		}   
+	}
 
-        if (currentQuery) {
-            const keybind = currentQuery.conclude();
+	function tryExecute() {
+		let focus: Keybind | undefined = undefined;
 
-            if (!keybind) {
-                return;
-            }
+		for (let i = 0; i < currentInputBuffer.length; i++) {
+			const key = currentInputBuffer[i];
 
-            currentQuery = undefined;
+			if (isKeybind(key)) {
+				if (!focus) {
+					focus = key;
+				}
+			} 
 
-            if (getCaptureLength(keybind) === 0 ) {
-                keybind.onTrigger(ctxSetter, {});
-            } else {
-                currentKeybind = keybind;
-            }
-        }
-    }
+			if (typeof key === "string") {
+				if (!isNaN(+key)) {
+					let j = i;
+					let num = "";
+					let next = currentInputBuffer[j];
 
+					while (!isKeybind(next) && !isNaN(+next)) {
+						num += next;
+						j++;
+						next = currentInputBuffer[j];
+					}
+
+					const offset = j - i;
+					currentInputBuffer.splice(i, offset, +num);
+				}
+			}
+		}
+
+		console.log(currentInputBuffer);
+	}
+
+	function isKeybind(input: any): input is Keybind {
+		return "identifier" in input;
+	} 
+
+	function ctxSetter(setter: (ctx: EditorContext) => void) {
+		EDITOR_CONTEXT.update((ctx) => {
+			setter(ctx);
+			return ctx;
+		});
+	}
+
+	
     function convertKeyboardEventToKey(event: KeyboardEvent): Key {
         const key: KeyDetailed = {
             key: event.key,
-            modifier: new Set()
         };
 
         if (event.ctrlKey) {
-            key.modifier!.add("Ctrl");
+			key.modifier = new Set();
+            key.modifier.add("Ctrl");
         }
 
         if (event.altKey) {
-            key.modifier!.add("Alt");
+			if (!key.modifier) {
+				key.modifier = new Set();
+			}
+			
+            key.modifier.add("Alt");
         }
 
-        return key.modifier!.size === 0 ? event.key : key;
+        return key.modifier ? event.key : key;
     }
 }

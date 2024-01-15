@@ -47,6 +47,13 @@ export namespace Settings {
 			.describe("Opens the command palette")
 			.register((_setter, _data) => Modals.openCommandPalette());
 
+		keymap.create("action.del", "d")
+			.describe("Deletes range")
+			.action()
+			.register((_setter, range) => {
+				console.log(range);
+			});
+
         return keymap;
     }
     
