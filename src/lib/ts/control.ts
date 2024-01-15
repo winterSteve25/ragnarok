@@ -1,4 +1,4 @@
-import {type Key, type Keybind, KeybindQuery, type KeyDetailed, type EditorContext, MotionKeybind, keyToString} from "ragnarok-api";
+import {type Key, type Keybind, KeybindQuery, type KeyDetailed, type EditorContext, MotionKeybind} from "ragnarok-api";
 import {Settings} from "./settings";
 import { EDITOR_CONTEXT } from "./stores";
 

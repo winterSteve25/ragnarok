@@ -5,7 +5,6 @@
     import {OPENED_FILE, EDITOR_CONTEXT} from "../../ts/stores";
     import {LSP} from "../../ts/lsp";
     import {renderPlainText, renderSemanticTokens} from "./codeEditor";
-    import {get} from "svelte/store";
 
     let file: File | undefined = undefined;
     
@@ -14,7 +13,7 @@
     
     $: {
         if (cursor) {
-			const context = get(EDITOR_CONTEXT);
+			const context = $EDITOR_CONTEXT;
             const top = context.cursorLine * (lineHeight ? lineHeight : 0);
             cursor.style.left = `calc(${context.cursorPosition} * 1ch)`;
             cursor.style.top = `${top}px`;

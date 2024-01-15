@@ -7,7 +7,7 @@ export const COMMAND_PALETTE_MODAL = writable(null);
 export const LOADING_PLUGIN: Writable<string | undefined> = writable(undefined); 
 export const EDITOR_CONTEXT: Writable<EditorContext> = writable({
 	cursorPosition: 0,
-	cursorLine: 2,
+	cursorLine: 0,
 	insertMode: false,
 	currentBuffer: [],
 });
