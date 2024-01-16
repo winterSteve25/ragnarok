@@ -103,9 +103,9 @@
 
     #cursor {
       position: absolute;
-      width: 2px;
+      width: 1ch;
       background-color: white;
-      animation: blink 1.2s infinite step-end;
+      // animation: blink 1.2s infinite step-end;
     }
 
     @keyframes blink {
