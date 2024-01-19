@@ -28,7 +28,12 @@
         const content = await FileHelper.openTextFile(file);
 
 		EDITOR_CONTEXT.update((ctx) => {
-			ctx.currentBuffer = content.split("\n");
+			const lines = content.split("\n");
+			lines.pop();
+			
+			ctx.cursorPosition = 0;
+			ctx.cursorLine = 0;
+			ctx.currentBuffer = lines;
 			return ctx;
 		});
 
@@ -74,6 +79,7 @@
         {/await}
     {/if}
 </div>
+<svelte:window on:resize={() => setLineHeight(null)} />
 
 <style lang="scss">
   .Editor {
@@ -86,13 +92,13 @@
     
     position: relative;
     background-color: var(--code-background);
+    font-family: 'JetBrainsMonoNL NF', monospace;
+    font-size: 16px;
+    line-height: 100%;
 
     #code-document {
       padding: 0;
       margin: 0;
-      font-family: 'JetBrainsMonoNL NF', monospace;
-      font-size: 18px;
-      line-height: 100%;
       
       :global(.code-line) {
         padding-top: 2px;

@@ -134,8 +134,6 @@ export namespace KeyboardControl {
 	}
 
 	function trigger(keybind: Keybind, data: Partial<KeybindData>) {
-		console.log(keybind);
-		console.log(data);
 		currentKeybindIdx = -1;
 		currentInputBuffer = [];
 		keybind.onTrigger(ctxSetter, data);

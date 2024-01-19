@@ -3,7 +3,8 @@ import {Plugins} from "./plugins";
 import {appConfigDir} from "@tauri-apps/api/path";
 import {createDir, exists, readTextFile, writeTextFile} from "@tauri-apps/api/fs";
 import {type Writable, writable} from "svelte/store";
-import { Modals } from "./modals";
+import { registerMotionKeys } from "../keybinds/motion";
+import { registerActionKeys } from "../keybinds/actions";
 
 export interface Setting {
     plugins: Array<PluginPath>;
@@ -29,16 +30,8 @@ export namespace Settings {
     function createDefaultKeymap() {
         const keymap = new Keymap();
 
-
-		keymap.create("open.cmd_palette", ":")
-			.describe("Opens the command palette")
-			.register((_setter, _data) => Modals.openCommandPalette());
-
-		keymap.create("action.del", "d")
-			.describe("Deletes range")
-			.action()
-			.register((_setter, range) => {
-			});
+		registerMotionKeys(keymap);
+		registerActionKeys(keymap);
 
         return keymap;
     }

@@ -13,16 +13,21 @@ export function renderPlainText(content: string): HTMLElement {
         lineDiv.classList.add("code-line");
         
         line.split(" ").forEach((token) => {
-           const span = document.createElement("span");
-           span.innerText = token ? token : "\u00A0";
-           lineDiv.appendChild(span);
-           lineDiv.appendChild(createWhitespace());
+           	const span = document.createElement("span");
+           	span.innerText = token ? token : "\u00A0";
+           	lineDiv.appendChild(span);
+			if (token) {
+           		lineDiv.appendChild(createWhitespace());
+			}
         });
-        
         
         if (lineDiv.lastChild) {
             lineDiv.removeChild(lineDiv.lastChild);
         }
+
+		if (!lineDiv.hasChildNodes()) {
+			lineDiv.appendChild(document.createElement("br"));
+		}
         
         base.appendChild(lineDiv);
     })
