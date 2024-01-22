@@ -1,23 +1,16 @@
-import type { EditorContext, Keymap } from "ragnarok-api";
-
-function lastOnLine(ctx: Readonly<EditorContext>, line: number): number {
-	return Math.max(ctx.currentBuffer[line].length - 1, 0);
-}
-
-function isCursorOverChars(ctx: Readonly<EditorContext>, line: number): boolean {
-	return ctx.currentBuffer[line].length - 1 <= ctx.cursorPosition;
-}
+import type { Keymap } from "ragnarok-api";
+import { KeybindHelper } from "./helper";
 
 export function registerMotionKeys(keymap: Keymap) {
 	keymap.create("motion.right", "l")
 		.describe("Moves right")
 		.motion()
-		.register((ctx, _capture) => {
+		.register((ctx, data) => {
 			const line = ctx.cursorLine;
 			const pos = ctx.cursorPosition;
 
-			if (isCursorOverChars(ctx, line)) {
-				if (line == ctx.currentBuffer.length - 1) {
+			if (KeybindHelper.isCursorOverChars(ctx, line)) {
+				if (line == ctx.currentBuffer!.length - 1) {
 					return [pos, line];
 				}
 				return [0, line + 1];
@@ -29,7 +22,7 @@ export function registerMotionKeys(keymap: Keymap) {
 	keymap.create("motion.left", "h")
 		.describe("Moves left")
 		.motion()
-		.register((ctx, _capture) => {
+		.register((ctx, data) => {
 			const line = ctx.cursorLine;
 			const pos = ctx.cursorPosition;
 
@@ -37,7 +30,7 @@ export function registerMotionKeys(keymap: Keymap) {
 				if (line == 0) {
 					return [0, 0];
 				}
-				return [lastOnLine(ctx, line - 1), line - 1];
+				return [KeybindHelper.lastOnLine(ctx, line - 1), line - 1];
 			}
 
 			return [pos - 1, line];
@@ -46,7 +39,7 @@ export function registerMotionKeys(keymap: Keymap) {
 	keymap.create("motion.up", "k")
 		.describe("Moves up")
 		.motion()
-		.register((ctx, _capture) => {
+		.register((ctx, data) => {
 			const line = ctx.cursorLine;
 			const pos = ctx.cursorPosition;
 
@@ -55,7 +48,7 @@ export function registerMotionKeys(keymap: Keymap) {
 			}
 
 			const newLine = line - 1;
-			const newPos = isCursorOverChars(ctx, newLine) ? lastOnLine(ctx, newLine) : pos;
+			const newPos = KeybindHelper.isCursorOverChars(ctx, newLine) ? KeybindHelper.lastOnLine(ctx, newLine) : pos;
 
 			return [newPos, newLine];
 		});
@@ -63,16 +56,16 @@ export function registerMotionKeys(keymap: Keymap) {
 	keymap.create("motion.down", "j")
 		.describe("Moves down")
 		.motion()
-		.register((ctx, _capture) => {
+		.register((ctx, data) => {
 			const line = ctx.cursorLine;
 			const pos = ctx.cursorPosition;
 
-			if (line === ctx.currentBuffer.length - 1) {
+			if (line === ctx.currentBuffer!.length - 1) {
 				return [pos, line];
 			}
 
 			const newLine = line + 1;
-			const newPos = isCursorOverChars(ctx, newLine) ? lastOnLine(ctx, newLine) : pos;
+			const newPos = KeybindHelper.isCursorOverChars(ctx, newLine) ? KeybindHelper.lastOnLine(ctx, newLine) : pos;
 
 			return [newPos, newLine];
 		});

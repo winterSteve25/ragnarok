@@ -8,12 +8,18 @@
     import View from "./lib/components/view/View.svelte";
     import SettingsModal from "./lib/components/modals/SettingsModal.svelte";
     import CommandPaletteModal from "./lib/components/modals/CommandPaletteModal.svelte";
-    import {KeyboardControl} from "./lib/ts/control";
+    import { onMount } from "svelte";
+    import { KeyboardControl } from "./lib/ts/control";
     
     async function load() {
         await Settings.loadSettings();
         await new Promise(resolve => setTimeout(resolve, 1000));
     }
+
+	onMount(() => {
+		document.addEventListener("keydown", KeyboardControl.onKeyDown);
+		document.addEventListener("focusin", KeyboardControl.onFocusIn);
+	})
 </script>
 
 <main>
@@ -50,8 +56,6 @@
         </div>
     {/await}
 </main>
-
-<svelte:window on:keypress={KeyboardControl.onKeyDown}/>
 
 <style lang="scss">
   main {

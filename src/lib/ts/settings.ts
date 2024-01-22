@@ -5,6 +5,7 @@ import {createDir, exists, readTextFile, writeTextFile} from "@tauri-apps/api/fs
 import {type Writable, writable} from "svelte/store";
 import { registerMotionKeys } from "../keybinds/motion";
 import { registerActionKeys } from "../keybinds/actions";
+import { registerGlobalKeys } from "../keybinds/global";
 
 export interface Setting {
     plugins: Array<PluginPath>;
@@ -32,6 +33,7 @@ export namespace Settings {
 
 		registerMotionKeys(keymap);
 		registerActionKeys(keymap);
+		registerGlobalKeys(keymap);
 
         return keymap;
     }

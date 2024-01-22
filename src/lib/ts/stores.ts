@@ -9,5 +9,6 @@ export const EDITOR_CONTEXT: Writable<EditorContext> = writable({
 	cursorPosition: 0,
 	cursorLine: 0,
 	insertMode: false,
-	currentBuffer: [],
+	currentBuffer: null,
+	currentFile: null,
 });

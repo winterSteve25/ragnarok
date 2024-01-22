@@ -19,7 +19,13 @@ export namespace KeyboardControl {
 	let currentInputBuffer: (Keybind | string | number)[] = [];
     let currentQuery: KeybindQuery | undefined = undefined;
 	let capture: boolean = false;
+	let isNewQuery: boolean = false;
 	
+	const ctx = get(EDITOR_CONTEXT);
+	
+	export function onFocusIn(event: FocusEvent) {
+	}
+
     export function onKeyDown(event: KeyboardEvent) {
         const element = event.target as HTMLElement;
 
@@ -33,7 +39,7 @@ export namespace KeyboardControl {
             || event.key === "Super") {
             return;
         }
-
+		
         event.preventDefault();
 
 		if (capture) {
@@ -59,7 +65,8 @@ export namespace KeyboardControl {
 		}
 
 		if (currentQuery) {
-			const k = currentQuery.conclude();
+			let k = currentQuery.conclude();
+			
 			if (k) {
 				if (currentKeybindIdx === -1) {
 					currentKeybindIdx = currentInputBuffer.length;
@@ -70,6 +77,12 @@ export namespace KeyboardControl {
 				currentInputBuffer.push(k);
 				currentQuery = undefined;
 				tryExecute();
+			} else {
+				if (!isNewQuery) {
+					currentQuery.update(convertKeyboardEventToKey(event));
+				} else {
+					isNewQuery = false;
+				}
 			}
 		}   
 	}
@@ -77,7 +90,6 @@ export namespace KeyboardControl {
 	function tryExecute() {
 		if (currentKeybindIdx === -1) return;
 		const keybind = currentInputBuffer[currentKeybindIdx] as Keybind;
-		const ctx = get(EDITOR_CONTEXT);
 		
 		if (keybind instanceof MotionKeybind) {
 			returnMotion(currentKeybindIdx, true);
@@ -94,12 +106,12 @@ export namespace KeyboardControl {
 			if (motion) {
 				const dest = returnMotion(motion, false);
 				if (dest) {
-					trigger(keybind, {
+					trigger(keybind, () => {return{
 						range: {
 							start: [ctx.cursorPosition, ctx.cursorLine],
 							end: dest
 						}
-					});
+					}});
 				}
 				return;
 			}
@@ -107,12 +119,12 @@ export namespace KeyboardControl {
 			if (currentInputBuffer.length > currentKeybindIdx + 1) {
 				const action = currentInputBuffer[currentKeybindIdx + 1];
 				if (action instanceof ActionKeybind && action.identifier === keybind.identifier) {
-					trigger(keybind, {
+					trigger(keybind, () => {return {
 						range: {
 							start: [0, ctx.cursorLine],
-							end: [ctx.currentBuffer[ctx.cursorLine].length, ctx.cursorLine]
+							end: [ctx.currentBuffer![ctx.cursorLine].length, ctx.cursorLine]
 						}
-					});
+					}});
 					return;
 				}
 			}
@@ -120,7 +132,7 @@ export namespace KeyboardControl {
 			return;
 		}
 		
-		trigger(keybind, {});
+		trigger(keybind, () => { return {} });
 	}
 
 	function isMotion(offset: number): boolean {
@@ -132,11 +144,16 @@ export namespace KeyboardControl {
 
 		return false;
 	}
-
-	function trigger(keybind: Keybind, data: Partial<KeybindData>) {
+	
+	function trigger(keybind: Keybind, data: () => Partial<KeybindData>) {
 		currentKeybindIdx = -1;
 		currentInputBuffer = [];
-		keybind.onTrigger(ctxSetter, data);
+		
+		if (keybind.requiresBuffer && (!ctx.currentBuffer || !ctx.currentFile || ctx.insertMode)) {
+			return;
+		}
+		
+		keybind.onTrigger(ctxSetter, data());
 	}
 
 	function returnMotion(motionIdx: number, run: boolean): [number, number] | undefined {
@@ -154,7 +171,7 @@ export namespace KeyboardControl {
 				motionMultiplier: motionMultiplier
 			};
 			if (run) {
-				trigger(motion, data);
+				trigger(motion, () => data);
 			} else {
 				return motion.destination(get(EDITOR_CONTEXT), data);
 			}
@@ -169,7 +186,7 @@ export namespace KeyboardControl {
 				};
 
 				if (run) {
-					trigger(motion, data);
+					trigger(motion, () => data);
 				} else {
 					return motion.destination(get(EDITOR_CONTEXT), data);
 				}
@@ -187,7 +204,6 @@ export namespace KeyboardControl {
 		});
 	}
 
-	
     function convertKeyboardEventToKey(event: KeyboardEvent): Key {
         const key: KeyDetailed = {
             key: event.key,

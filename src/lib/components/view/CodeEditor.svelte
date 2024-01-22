@@ -18,6 +18,11 @@
             cursor.style.left = `calc(${context.cursorPosition} * 1ch)`;
             cursor.style.top = `${top}px`;
             cursor.style.height = `${lineHeight}px`;
+			if (context.insertMode) {
+				cursor.style.width = "0.2ch";
+			} else {
+				cursor.style.width = "1ch";
+			}
         }
     }
 
@@ -34,6 +39,8 @@
 			ctx.cursorPosition = 0;
 			ctx.cursorLine = 0;
 			ctx.currentBuffer = lines;
+			ctx.currentFile = file;
+
 			return ctx;
 		});
 
