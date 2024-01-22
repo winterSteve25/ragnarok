@@ -35,7 +35,7 @@
                 </h1>
             {/if}
         </div>
-    {:then _}
+    {:then}
         <Splitpanes theme="custom">
             <Pane minSize={15} snapSize={2} size={20}>
                 <FileExplorer/>

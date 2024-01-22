@@ -27,6 +27,7 @@ export namespace KeyboardControl {
 	}
 
     export function onKeyDown(event: KeyboardEvent) {
+
         const element = event.target as HTMLElement;
 
         if (element && element.tagName.toLowerCase() === "input") {
@@ -149,7 +150,7 @@ export namespace KeyboardControl {
 		currentKeybindIdx = -1;
 		currentInputBuffer = [];
 		
-		if (keybind.requiresBuffer && (!ctx.currentBuffer || !ctx.currentFile || ctx.insertMode)) {
+		if (keybind.requiresBuffer && (!ctx.currentBuffer || !ctx.currentFile)) {
 			return;
 		}
 		

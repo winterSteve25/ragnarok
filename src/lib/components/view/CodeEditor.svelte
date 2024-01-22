@@ -12,8 +12,9 @@
     let cursor: HTMLDivElement;
     
     $: {
+		const context = $EDITOR_CONTEXT;
+
         if (cursor) {
-			const context = $EDITOR_CONTEXT;
             const top = context.cursorLine * (lineHeight ? lineHeight : 0);
             cursor.style.left = `calc(${context.cursorPosition} * 1ch)`;
             cursor.style.top = `${top}px`;
@@ -40,6 +41,7 @@
 			ctx.cursorLine = 0;
 			ctx.currentBuffer = lines;
 			ctx.currentFile = file;
+			ctx.insertMode = false;
 
 			return ctx;
 		});
@@ -59,7 +61,7 @@
         };
     }
     
-    function setLineHeight(_node: HTMLDivElement) {
+    function setLineHeight(_: HTMLDivElement) {
         const codeLine = document.querySelector(".code-line");
         if (codeLine) {
             const heightInPixels = getComputedStyle(codeLine).height;
