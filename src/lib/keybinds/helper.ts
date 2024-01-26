@@ -13,6 +13,10 @@ export namespace KeybindHelper {
 		return Math.max(ctx.currentBuffer.getLineLength(line) - 1, 0);
 	}
 
+	export function firstOnLine(ctx: Readonly<EditorContext>, line: number): number {
+		return 0;
+	}
+	
 	export function isCursorBeyondLineEnd(ctx: Readonly<EditorContext>, line: number): boolean {
 		if (!ctx.currentBuffer) {
 			return false;

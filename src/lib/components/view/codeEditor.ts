@@ -8,24 +8,13 @@ export function renderSemanticTokens(content: string, semanticTokens: number[]):
 export function renderPlainText(line: string): HTMLElement {
     const lineDiv = document.createElement("div");
     lineDiv.classList.add("code-line");
-
-    line.split(" ").forEach((token) => {
-        const span = document.createElement("span");
-        span.innerText = token ? token : "\u00A0";
-        lineDiv.appendChild(span);
-        if (token) {
-            lineDiv.appendChild(createWhitespace());
-        }
-    });
-
-    if (lineDiv.lastChild) {
-        lineDiv.removeChild(lineDiv.lastChild);
-    }
-
-    if (!lineDiv.hasChildNodes()) {
-        lineDiv.appendChild(document.createElement("br"));
-    }
-
+    
+    const span = document.createElement("span");
+    span.innerText = line;
+    
+    lineDiv.appendChild(span);
+    lineDiv.appendChild(document.createElement("br"));
+    
     return lineDiv;
 }
 

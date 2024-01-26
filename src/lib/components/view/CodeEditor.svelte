@@ -54,8 +54,10 @@
             ctx.currentBuffer = buffer;
             ctx.currentFile = file;
             ctx.insertMode = false;
+            
+            forceScrollIndex = 0;
+            cursorOffset = 0;
 
-            console.log("Line Count:" + ctx.currentBuffer.getLineCount());
             return ctx;
         });
 
@@ -127,8 +129,10 @@
 
 <style lang="scss">
   .Editor {
-    width: 100%;
+    min-width: 100%;
     min-height: 100%;
+    
+    width: auto;
     height: auto;
 
     box-sizing: border-box;
