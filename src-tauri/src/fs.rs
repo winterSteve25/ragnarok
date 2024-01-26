@@ -1,5 +1,4 @@
 use std::cmp::Ordering;
-use std::fs;
 use std::fs::DirEntry;
 use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
@@ -63,13 +62,20 @@ pub fn get_files_in_path(path: String) -> Result<Vec<File>, FSError> {
 }
 
 #[tauri::command]
-pub fn open_text_file(path: String) -> Result<String, FSError> {
-    Ok(fs::read_to_string(path)?)
+pub async fn open_text_file(path: String) -> Result<String, FSError> {
+    let content = tokio::fs::read_to_string(path).await?;
+    Ok(content)
 }
 
 #[cfg(target_family="unix")]
 fn is_file_hidden(entry: &DirEntry) -> bool {
     entry.file_name().to_string_lossy().to_string().starts_with(".")
+}
+
+#[tauri::command]
+pub async fn write_file(buffer: String, path: String) -> Result<(), FSError> {
+    tokio::fs::write(path, buffer).await?;
+    Ok(())
 }
 
 #[cfg(target_family = "windows")]

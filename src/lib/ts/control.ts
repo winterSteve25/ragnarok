@@ -12,21 +12,39 @@ import {
 import { Settings } from "./settings";
 import { EDITOR_CONTEXT } from "./stores";
 import { get } from "svelte/store";
+import {KeybindHelper} from "../keybinds/helper";
 
 export namespace KeyboardControl {
     
 	let currentKeybindIdx = -1;
 	let currentInputBuffer: (Keybind | string | number)[] = [];
-    let currentQuery: KeybindQuery | undefined = undefined;
+    let currentQuery: KeybindQuery | null = null;
 	let capture: boolean = false;
 	let isNewQuery: boolean = false;
 	
 	const ctx = get(EDITOR_CONTEXT);
+	const dirToOffset = {
+		"Left": KeybindHelper.moveCursorLeft,
+		"Right": KeybindHelper.moveCursorRight,
+		"Up": KeybindHelper.moveCursorUp,
+		"Down": KeybindHelper.moveCursorDown,
+	};
 	
 	export function onFocusIn(event: FocusEvent) {
 	}
 
     export function onKeyDown(event: KeyboardEvent) {
+		
+		if (ctx.insertMode) {
+			if (!ctx.currentBuffer) {
+				return;
+			}
+			
+			if (insertMode(event)) {
+				event.preventDefault();
+				return;
+			}
+		}
 
         const element = event.target as HTMLElement;
 
@@ -76,7 +94,7 @@ export namespace KeyboardControl {
 					}
 				}
 				currentInputBuffer.push(k);
-				currentQuery = undefined;
+				currentQuery = null;
 				tryExecute();
 			} else {
 				if (!isNewQuery) {
@@ -123,7 +141,7 @@ export namespace KeyboardControl {
 					trigger(keybind, () => {return {
 						range: {
 							start: [0, ctx.cursorLine],
-							end: [ctx.currentBuffer![ctx.cursorLine].length, ctx.cursorLine]
+							end: [ctx.currentBuffer!.getLineLength(ctx.cursorLine), ctx.cursorLine]
 						}
 					}});
 					return;
@@ -225,4 +243,102 @@ export namespace KeyboardControl {
 
         return key.modifier ? event.key : key;
     }
+	
+	function insertMode(event: KeyboardEvent): boolean {
+		
+		if (event.key === "Escape") {
+			return false;
+		}
+		
+		if (event.code.startsWith("Key") || 
+			event.code === "Space" ||
+			event.code.startsWith("Digit")
+		) {
+			insertStrAtCursor(event.key);
+			return true;
+		}
+		
+		if (event.key === "Tab") {
+			insertStrAtCursor("    ");
+			return true;
+		}
+		
+		if (event.key === "Enter") {
+			const buffer = ctx.currentBuffer!;
+			const offset = buffer.getOffsetAt(ctx.cursorLine, ctx.cursorPosition + 1);
+
+			if (offset < 0) {
+				return true;
+			}
+
+			EDITOR_CONTEXT.update((ctx) => {
+				buffer.insert(offset, "\n");
+				ctx.cursorLine += 1;
+				ctx.cursorPosition = 0;
+				return ctx;
+			});
+			
+			return true;
+		}
+		
+		if (event.key.startsWith("Arrow")) {
+			// @ts-ignore
+			const dir = dirToOffset[event.key.slice(5)];
+			const [destPos, destLine] = dir(ctx, 1);
+			
+			if (destPos === ctx.cursorPosition && destLine === ctx.cursorLine) {
+				return true;
+			}
+
+			EDITOR_CONTEXT.update((ctx) => {
+				ctx.cursorPosition = destPos;
+				ctx.cursorLine = destLine;
+				return ctx;
+			});
+			
+			return true;
+		}
+		
+		if (event.key === "Delete") {
+			const buffer = ctx.currentBuffer!;
+			const offset = buffer.getOffsetAt(ctx.cursorLine, ctx.cursorPosition) + 1;
+			if (offset < 0) return true;
+
+			EDITOR_CONTEXT.update((ctx) => {
+				buffer.delete(offset, 1);
+				return ctx;
+			});
+			return true;
+		}
+		
+		if (event.key === "Backspace") {
+			const buffer = ctx.currentBuffer!;
+			const offset = buffer.getOffsetAt(ctx.cursorLine, ctx.cursorPosition);
+			if (offset < 0) return true;
+			
+			EDITOR_CONTEXT.update((ctx) => {
+				buffer.delete(offset, 1);
+				ctx.cursorPosition -= 1;
+				return ctx;
+			});
+			return true;
+		}
+		
+		return false;
+	}
+	
+	function insertStrAtCursor(char: string) {
+		const buffer = ctx.currentBuffer!;
+		const offset = buffer.getOffsetAt(ctx.cursorLine, ctx.cursorPosition + 1);
+		
+		if (offset < 0) {
+			return;
+		}
+		
+		EDITOR_CONTEXT.update((ctx) => {
+			buffer.insert(offset, char);
+			ctx.cursorPosition += char.length;
+			return ctx;
+		});
+	}
 }

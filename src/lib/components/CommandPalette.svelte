@@ -1,4 +1,5 @@
 <script lang="ts">
+
     interface CommandSearchResult {
         cmd: Command;
         matches: ReadonlyArray<FuseResultMatch>;
@@ -8,6 +9,7 @@
     import {Command} from "ragnarok-api";
     import Fuse, {type FuseResultMatch} from "fuse.js";
     import {Settings} from "../ts/settings";
+    import {COMMAND_PALETTE_MODAL} from "../ts/stores";
 
     let input: HTMLInputElement;
     let inputText: string;
@@ -48,7 +50,8 @@
     
     function onKeyPressed(event: KeyboardEvent) {
         if (event.key === "Enter") {
-            
+            commandResults[0].cmd.execute([]);
+            COMMAND_PALETTE_MODAL.set(null);
         }
     }
 </script>
@@ -86,6 +89,9 @@
 
     #results {
       padding: 16px 2px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
   }
 </style>

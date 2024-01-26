@@ -2,10 +2,12 @@ import {type Key, Keymap, type PluginPath, Command, keyToString} from "ragnarok-
 import {Plugins} from "./plugins";
 import {appConfigDir} from "@tauri-apps/api/path";
 import {createDir, exists, readTextFile, writeTextFile} from "@tauri-apps/api/fs";
-import {type Writable, writable} from "svelte/store";
+import {get, type Writable, writable} from "svelte/store";
 import { registerMotionKeys } from "../keybinds/motion";
 import { registerActionKeys } from "../keybinds/actions";
 import { registerGlobalKeys } from "../keybinds/global";
+import {EDITOR_CONTEXT, OPENED_FILE} from "./stores";
+import {FileHelper} from "./fileHelper";
 
 export interface Setting {
     plugins: Array<PluginPath>;
@@ -40,7 +42,16 @@ export namespace Settings {
     
     function createDefaultCommandMap() {
         return [
-            Command.create("q", () => {}).describe("Quits the current buffer"),
+            Command.create("q", () => OPENED_FILE.set(null)).describe("Quits the current buffer"),
+            Command.create("wq", async () => {
+                const openedFile = get(OPENED_FILE);
+                if (!openedFile) {
+                    return;
+                }
+                
+                OPENED_FILE.set(null);
+                await FileHelper.writeTextFile(openedFile, get(EDITOR_CONTEXT).currentBuffer!)
+            }).describe("Writes and quits current buffer"),
         ];
     }
 

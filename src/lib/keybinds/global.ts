@@ -26,13 +26,13 @@ export function registerGlobalKeys(keymap: Keymap) {
 
 	keymap.create("edit.cancel", "Escape")
 		.describe("Cancel actions")
-		.register([false, (setter, _data) => {
+		.register([true, (setter, _data) => {
 			setter((ctx) => {
 				if (ctx.insertMode) {
 					ctx.insertMode = false;
 				}
 
-				if (KeybindHelper.isCursorOverChars(ctx, ctx.cursorLine)) {
+				if (KeybindHelper.isCursorBeyondLineEnd(ctx, ctx.cursorLine)) {
 					ctx.cursorPosition = KeybindHelper.lastOnLine(ctx, ctx.cursorLine);
 				}
 			});

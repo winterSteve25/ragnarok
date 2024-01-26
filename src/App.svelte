@@ -8,7 +8,7 @@
     import View from "./lib/components/view/View.svelte";
     import SettingsModal from "./lib/components/modals/SettingsModal.svelte";
     import CommandPaletteModal from "./lib/components/modals/CommandPaletteModal.svelte";
-    import { onMount } from "svelte";
+    import {onDestroy, onMount} from "svelte";
     import { KeyboardControl } from "./lib/ts/control";
     
     async function load() {
@@ -19,7 +19,12 @@
 	onMount(() => {
 		document.addEventListener("keydown", KeyboardControl.onKeyDown);
 		document.addEventListener("focusin", KeyboardControl.onFocusIn);
-	})
+	});
+    
+    onDestroy(() => {
+        document.removeEventListener("keydown", KeyboardControl.onKeyDown);
+        document.removeEventListener("focusin", KeyboardControl.onFocusIn);
+    })
 </script>
 
 <main>

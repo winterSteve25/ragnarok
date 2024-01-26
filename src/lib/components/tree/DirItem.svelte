@@ -9,7 +9,7 @@
 
 <div class="DirItem">
     <button on:click={() => expanded = !expanded}>
-        <!--        <img alt="file-icon" src={Theming.getIconFromLoadedTheme(dir)}/>-->
+<!--                <img alt="file-icon" src={Theming.getIconFromLoadedTheme(dir)}/>-->
         <span>{dir.filename}</span>
     </button>
     <div id="tree">

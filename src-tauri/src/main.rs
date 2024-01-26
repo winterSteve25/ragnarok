@@ -16,6 +16,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             fs::get_files_in_path,
             fs::open_text_file,
+            fs::write_file,
             lsp::start_ls,
             lsp::semantic_tokens,
         ])
