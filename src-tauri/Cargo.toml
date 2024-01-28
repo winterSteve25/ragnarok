@@ -11,6 +11,7 @@ edition = "2021"
 
 [build-dependencies]
 tauri-build = { version = "1.5", features = [] }
+cc="*"
 
 [dependencies]
 tauri = { version = "1.5", features = [ "http-all", "fs-write-file", "fs-exists", "fs-read-dir", "fs-read-file", "fs-create-dir", "path-all"] }
@@ -23,6 +24,8 @@ lsp-types = "0.95.0"
 tokio = "1.35.0"
 env_logger = "0.10.1"
 log = "0.4.20"
+tree-sitter = "0.20.10"
+tree-sitter-rust = "0.20.3"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

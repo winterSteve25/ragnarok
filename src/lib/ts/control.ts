@@ -33,8 +33,7 @@ export namespace KeyboardControl {
 	export function onFocusIn(event: FocusEvent) {
 	}
 
-    export function onKeyDown(event: KeyboardEvent) {
-		
+    export async function onKeyDown(event: KeyboardEvent) {
 		if (ctx.insertMode) {
 			if (!ctx.currentBuffer) {
 				return;
