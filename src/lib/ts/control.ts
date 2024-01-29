@@ -80,6 +80,7 @@ export namespace KeyboardControl {
 
 		if (!currentQuery) {
 			currentQuery = Settings.activeKeymap.get(convertKeyboardEventToKey(event));
+			console.log(convertKeyboardEventToKey(event));
 		}
 
 		if (currentQuery) {
@@ -240,7 +241,7 @@ export namespace KeyboardControl {
             key.modifier.add("Alt");
         }
 
-        return key.modifier ? event.key : key;
+        return key.modifier ? key : event.key;
     }
 	
 	function insertMode(event: KeyboardEvent): boolean {
@@ -317,7 +318,14 @@ export namespace KeyboardControl {
 			
 			EDITOR_CONTEXT.update((ctx) => {
 				buffer.delete(offset, 1);
-				ctx.cursorPosition -= 1;
+				
+				if (ctx.cursorPosition === 0) {
+					ctx.cursorLine -= 1;
+					ctx.cursorPosition = KeybindHelper.lastOnLine(ctx, ctx.cursorLine);
+				} else {
+					ctx.cursorPosition -= 1;
+				}
+				
 				return ctx;
 			});
 			return true;

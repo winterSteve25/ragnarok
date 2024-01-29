@@ -10,6 +10,7 @@ use crate::lsp::client::LSPClient;
 mod fs;
 mod errors;
 mod lsp;
+mod treesitter;
 
 fn main() {
     let app = tauri::Builder::default()
