@@ -1,7 +1,7 @@
 <script lang="ts">
     import {FileHelper} from "../../ts/fileHelper";
     import {type File} from "ragnarok-api";
-    import {EDITOR_CONTEXT, OPENED_FILE} from "../../ts/stores";
+    import {EDITOR_CONTEXT, FOCUS_ON_EDITOR, OPENED_FILE} from "../../ts/stores";
     import {LSP} from "../../ts/lsp";
     import {renderPlainText, renderSemanticTokens} from "./codeEditor";
     import {PieceTreeTextBufferBuilder} from "vscode-piece-tree";
@@ -9,6 +9,7 @@
 
     $: file = $OPENED_FILE;
     $: buffer = $EDITOR_CONTEXT.currentBuffer!;
+    $: hasFocus = $FOCUS_ON_EDITOR;
     
     let lineHeight: number = 0;
     let viewPortHeight: number = 0;
@@ -17,25 +18,28 @@
     
     let cursor: HTMLDivElement;
     let lineHolder: HTMLDivElement;
-
+    
     $: {
         const context = $EDITOR_CONTEXT;
 
         if (cursor) {
+            if (!hasFocus) {
+                cursor.style.visibility = "hidden";
+            } else {
+                cursor.style.visibility = "visible";
+            }
+            
             const top = (context.cursorLine - 1) * lineHeight - cursorOffset;
             cursor.style.left = `calc(${context.cursorPosition} * 1ch)`;
             cursor.style.top = `${top}px`;
             cursor.style.height = `${lineHeight}px`;
+            
             if (context.insertMode) {
                 cursor.style.width = "0.2ch";
             } else {
                 cursor.style.width = "1ch";
             }
 
-            // console.log(`Cursor: [${context.cursorPosition}, ${context.cursorLine}]`)
-            // console.log(`Line Length: ${context.currentBuffer?.getLineLength(context.cursorLine)}`);
-            // console.log(`Content: ${context.currentBuffer?.getLineContent(context.cursorLine)}`);
-            
             if (context.cursorLine >= Math.ceil(viewPortHeight / lineHeight)) {
                 forceScrollIndex = context.cursorLine + 2;
             } else if (context.cursorLine <= Math.ceil(cursorOffset / lineHeight)) {
@@ -96,7 +100,7 @@
     }
 </script>
 
-<div class="Editor">
+<div class="Editor" tabindex="-1">
     <div style="display: none" class="code-line" bind:this={lineHolder} use:setLineHeight>0</div>
     
     {#if file}

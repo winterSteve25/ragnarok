@@ -19,13 +19,11 @@
 	onMount(() => {
 		document.addEventListener("keydown", KeyboardControl.onKeyDown);
 		document.addEventListener("focusin", KeyboardControl.onFocusIn);
-        document.addEventListener("focusout", KeyboardControl.onFocusOut);
 	});
     
     onDestroy(() => {
         document.removeEventListener("keydown", KeyboardControl.onKeyDown);
         document.removeEventListener("focusin", KeyboardControl.onFocusIn);
-        document.removeEventListener("focusout", KeyboardControl.onFocusOut);
     })
 </script>
 
@@ -42,9 +40,9 @@
                 </h1>
             {/if}
         </div>
-    {:then}
+    {:then _}
         <Splitpanes theme="custom">
-            <Pane minSize={15} snapSize={2} size={20}>
+            <Pane size={20}>
                 <FileExplorer/>
             </Pane>
             <Pane minSize={20}>

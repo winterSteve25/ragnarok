@@ -1,10 +1,15 @@
 <script lang="ts">
     import FileTree from "./FileTree.svelte";
     import {Modals} from "../../ts/modals.js";
+    
     export let currentPath: string = "~/Dev/ragnarok";
+    
+    function onNavigate({ detail }: { detail: { direction: [number, number] } }) {
+        const direction = detail.direction;
+    }
 </script>
 
-<div class="FileTree">
+<div class="FileExplorer navigable" tabindex="-1" on:navigate={onNavigate}>
     <div id="top-bar">
         <span>{currentPath}</span>
         <div>
@@ -19,7 +24,7 @@
 </div>
 
 <style lang="scss">
-  .FileTree {
+  .FileExplorer {
     height: 100%;
     
     #top-bar {

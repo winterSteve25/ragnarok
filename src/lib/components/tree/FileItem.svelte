@@ -1,11 +1,16 @@
 <script lang="ts">
     import type {File} from "ragnarok-api";
-    import {OPENED_FILE} from "../../ts/stores";
+    import {FOCUS_ON_EDITOR, OPENED_FILE} from "../../ts/stores";
 
     export let file: File;
+    
+    function open() {
+        OPENED_FILE.set(file);
+        FOCUS_ON_EDITOR.set(true);
+    }
 </script>
 
-<button class="FileItem" on:click={() => OPENED_FILE.set(file)}>
+<button class="FileItem" on:click={open}>
 <!--    <img alt="file-icon" src={Theming.getIconFromLoadedTheme(file)}/>-->
     <span>{file.filename}</span>
 </button>

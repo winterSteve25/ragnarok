@@ -12,3 +12,4 @@ export const EDITOR_CONTEXT: Writable<EditorContext> = writable({
 	currentBuffer: null,
 	currentFile: null,
 });
+export const FOCUS_ON_EDITOR: Writable<boolean> = writable(false);

@@ -46,6 +46,7 @@
         {/await}
     </div>
 {/if}
+
 <style lang="scss">
   div {
     display: flex;
