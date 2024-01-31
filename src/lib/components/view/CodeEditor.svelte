@@ -8,6 +8,8 @@
     import VirtualList, {type AfterScrollEvent} from "svelte-tiny-virtual-list";
 
     $: file = $OPENED_FILE;
+    $: buffer = $EDITOR_CONTEXT.currentBuffer!;
+    
     let lineHeight: number = 0;
     let viewPortHeight: number = 0;
     let cursorOffset: number = 0;
@@ -107,14 +109,14 @@
                 <VirtualList
                         width="100%"
                         height={viewPortHeight}
-                        itemCount={$EDITOR_CONTEXT.currentBuffer.getLineCount()}
+                        itemCount={buffer.getLineCount()}
                         itemSize={lineHeight}
                         scrollToIndex={forceScrollIndex}
                         on:afterScroll={setCursorOffset}
                         bind:scrollOffset={cursorOffset}
                 >
-                    <div slot="item" let:index let:style {style}>
-                        {@html renderPlainText($EDITOR_CONTEXT.currentBuffer.getLineContent(index + 1)).outerHTML}
+                    <div slot="item" class="code-line" let:index let:style {style}>
+                        {@html renderPlainText(buffer.getLineContent(index + 1)).outerHTML}
                     </div>
                 </VirtualList>
                 <div id="cursor" bind:this={cursor}/>

@@ -19,11 +19,13 @@
 	onMount(() => {
 		document.addEventListener("keydown", KeyboardControl.onKeyDown);
 		document.addEventListener("focusin", KeyboardControl.onFocusIn);
+        document.addEventListener("focusout", KeyboardControl.onFocusOut);
 	});
     
     onDestroy(() => {
         document.removeEventListener("keydown", KeyboardControl.onKeyDown);
         document.removeEventListener("focusin", KeyboardControl.onFocusIn);
+        document.removeEventListener("focusout", KeyboardControl.onFocusOut);
     })
 </script>
 

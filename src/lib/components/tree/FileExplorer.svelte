@@ -20,7 +20,7 @@
 
 <style lang="scss">
   .FileTree {
-    height: auto;
+    height: 100%;
     
     #top-bar {
       font-size: 18px;

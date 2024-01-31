@@ -55,4 +55,8 @@ export function registerGlobalKeys(keymap: Keymap) {
                 }
             });
         }]);
+    
+    keymap.create("test", "g")
+        .then("d")
+        .register([true, (_, _a) => console.log("HALLO")])
 }

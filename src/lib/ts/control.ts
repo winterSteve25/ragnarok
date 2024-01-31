@@ -31,6 +31,11 @@ export namespace KeyboardControl {
 	};
 	
 	export function onFocusIn(event: FocusEvent) {
+		// console.log(event);
+	}
+
+	export function onFocusOut(event: FocusEvent) {
+		// console.log(event);
 	}
 
     export async function onKeyDown(event: KeyboardEvent) {
@@ -80,12 +85,20 @@ export namespace KeyboardControl {
 
 		if (!currentQuery) {
 			currentQuery = Settings.activeKeymap.get(convertKeyboardEventToKey(event));
-			console.log(convertKeyboardEventToKey(event));
+			isNewQuery = true;
 		}
-
+		
 		if (currentQuery) {
-			let k = currentQuery.conclude();
+			if (!isNewQuery) {
+				if (!currentQuery.update(convertKeyboardEventToKey(event))) {
+					currentQuery = null;
+					return;
+				}
+			} else {
+				isNewQuery = false;
+			}
 			
+			let k = currentQuery.conclude();
 			if (k) {
 				if (currentKeybindIdx === -1) {
 					currentKeybindIdx = currentInputBuffer.length;
@@ -96,14 +109,8 @@ export namespace KeyboardControl {
 				currentInputBuffer.push(k);
 				currentQuery = null;
 				tryExecute();
-			} else {
-				if (!isNewQuery) {
-					currentQuery.update(convertKeyboardEventToKey(event));
-				} else {
-					isNewQuery = false;
-				}
 			}
-		}   
+		}
 	}
 
 	function tryExecute() {
@@ -245,7 +252,6 @@ export namespace KeyboardControl {
     }
 	
 	function insertMode(event: KeyboardEvent): boolean {
-		
 		if (event.key === "Escape") {
 			return false;
 		}
